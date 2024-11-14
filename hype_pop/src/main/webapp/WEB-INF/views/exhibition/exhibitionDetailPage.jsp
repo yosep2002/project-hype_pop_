@@ -304,36 +304,46 @@ ul {
 }
 
 .image-section {
-	flex: 1;
-	margin-right: 20px;
-	background-color: gray;
-	border-radius: 8px;
-	padding: 10px;
-	position: relative; /* 절대 위치 설정을 위한 상대 위치 */
-	display: flex;
+    flex: 1;
+    margin-right: 20px;
+    background-color: gray;
+    border-radius: 8px;
+    padding: 10px;
+    position: relative; /* 절대 위치 설정을 위한 상대 위치 */
+    display: flex;
+    justify-content: center; /* 이미지를 중앙에 배치 */
+    align-items: center; /* 이미지를 수직으로 중앙에 배치 */
+    overflow: hidden; /* 이미지가 넘치지 않도록 자르기 */
+}
+
+.image-section img {
+    width: 100%; /* 이미지 너비를 컨테이너의 너비에 맞추기 */
+    height: auto; /* 이미지 비율을 유지하면서 높이를 자동으로 맞추기 */
+    object-fit: cover; /* 이미지의 비율을 유지하면서 컨테이너에 맞게 잘라내기 */
 }
 
 #likeContainer {
-	position: absolute; /* 절대 위치 설정 */
-	top: 10px; /* 상단 위치 */
-	right: 10px; /* 오른쪽 위치 */
-	display: flex; /* 수평으로 나열하기 위해 flex 사용 */
-	align-items: center; /* 수직 중앙 정렬 */
+    position: absolute; /* 절대 위치 설정 */
+    top: 10px; /* 상단 위치 */
+    right: 10px; /* 오른쪽 위치 */
+    display: flex; /* 수평으로 나열하기 위해 flex 사용 */
+    align-items: center; /* 수직 중앙 정렬 */
+    z-index: 10; /* 이미지 위에 표시되도록 z-index 설정 */
 }
 
 #likeCount {
-	margin-right: 2px; /* 하트와의 간격 조정 */
-	font-size: 20px; /* 글자 크기 조정 (필요시) */
+    margin-right: 2px; /* 하트와의 간격 조정 */
+    font-size: 20px; /* 글자 크기 조정 (필요시) */
 }
 
 #heartIcon {
-	font-size: 30px; /* 하트 크기 */
-	color: white; /* 초기 색상 변경 */
-	cursor: pointer; /* 커서 모양 변경 */
+    font-size: 30px; /* 하트 크기 */
+    color: black; /* 초기 색상 변경 */
+    cursor: pointer; /* 커서 모양 변경 */
 }
 
 #heartIcon.active {
-	color: red; /* 활성화된 상태 */
+    color: red; /* 활성화된 상태 */
 }
 .filled {
     color: gold;  /* 채운 별의 색 */
@@ -471,6 +481,7 @@ ul {
 
 	<div class="container">
 		<div class="image-section">
+			
 			<div id="likeContainer">
 				<p id="likeCount"></p>
 				<span class="heart" id="heartIcon" onclick="toggleHeart(this)">&#9825;</span>

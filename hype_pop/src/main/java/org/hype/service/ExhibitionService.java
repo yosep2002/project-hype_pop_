@@ -43,4 +43,6 @@ public interface ExhibitionService {
 
 	public List<exhImgVO> getExhDetailImg(int exhNo);
 
+	public List<exhImgVO> getExhImg(int exhNo);
+
 }

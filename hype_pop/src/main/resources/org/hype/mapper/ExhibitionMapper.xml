@@ -167,6 +167,20 @@
         WHERE exhNo = #{exhNo}
     ]]>
 	</select>
+	
+	<select id="getExhImg" resultType="org.hype.domain.exhImgVO">
+    <![CDATA[
+        SELECT exhNo, uuid, uploadpath AS uploadPath, filename AS fileName
+        FROM (
+            SELECT em.exhNo, em.uuid, em.uploadpath, em.filename
+            FROM exh_img_tbl em
+            LEFT JOIN exh_like_list_tbl el ON em.exhNo = el.exhNo
+            GROUP BY em.exhNo, em.uuid, em.uploadpath, em.filename
+            ORDER BY COUNT(el.exhNo) DESC
+        ) imgDetails
+        WHERE exhNo = #{exhNo}
+    ]]>
+	</select>
 
 	<select id="getExhibitionByNo" parameterType="int"
 		resultType="org.hype.domain.exhVO">

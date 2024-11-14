@@ -53,6 +53,71 @@ document.addEventListener("DOMContentLoaded", function() {
     xhrLikeCount.send();
 });
 
+function loadExhibitionImages(exhNo) {
+    const imageContainer = document.querySelector('.image-section');
+    const likeContainer = document.querySelector('#likeContainer');  // likeContainer를 따로 선택하여 저장
+
+    // 이미지 섹션에 있는 기존 이미지를 삭제하고 로딩 메시지 추가
+    imageContainer.innerHTML = '';  
+    imageContainer.appendChild(likeContainer);  // likeContainer를 다시 추가
+
+    const loadingMessage = document.createElement('p');
+    loadingMessage.textContent = '전시회 이미지를 로딩 중입니다...';
+    imageContainer.appendChild(loadingMessage);
+
+    // exhNo를 쿼리 파라미터로 포함하여 fetch 호출
+    fetch(`/exhibition/exhImg?exhNo=${exhNo}`)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('서버 오류: ' + response.status);  // 응답이 정상적이지 않으면 오류 처리
+            }
+            return response.json();  // JSON으로 응답을 처리
+        })
+        .then(exhibitionData => {
+            // 로딩 중 메시지 삭제
+            imageContainer.innerHTML = '';  // 기존 로딩 메시지 삭제
+            imageContainer.appendChild(likeContainer);  // likeContainer를 다시 추가
+
+            if (exhibitionData.length === 0) {
+                const noImageMessage = document.createElement('p');
+                noImageMessage.textContent = '전시회 이미지가 없습니다.';
+                imageContainer.appendChild(noImageMessage);
+                return;
+            }
+
+            exhibitionData.forEach(item => {
+                const img = document.createElement('img');
+
+                // 다양한 해상도의 이미지를 제공
+                img.srcset = ` 
+                    /exhibition/exhibitionImages/${item.uuid}_${encodeURIComponent(item.fileName)} 1x, 
+                    /exhibition/exhibitionImages/${item.uuid}_${encodeURIComponent(item.fileName.replace('.jpg', '-2x.jpg'))} 2x
+                `;
+                
+                img.src = `/exhibition/exhibitionImages/${item.uuid}_${encodeURIComponent(item.fileName)}`;  // 기본 이미지
+                img.alt = `Exhibition Image: ${item.fileName}`;
+                img.loading = 'lazy';  // 이미지 로딩 최적화     
+
+                img.onload = () => {
+                    img.style.display = 'block';  // 이미지가 로드되면 보이게 설정
+                };
+
+                img.onerror = () => {
+                    img.style.display = 'none';  // 오류 발생 시 이미지 숨기기
+                    console.error('이미지 로드 오류:', img.src);
+                };
+
+                imageContainer.appendChild(img); // 이미지 컨테이너에 추가
+            });
+
+        })
+        .catch(error => {
+            console.error('전시회 정보 로드 에러:', error);
+            imageContainer.innerHTML = '<p>전시회 이미지 로드에 실패했습니다. 다시 시도해 주세요.</p>';
+        });
+}
+
+
 // 좋아요 표시 기능
 function toggleHeart(element) {
     const exhNo = document.getElementById("exhNo").value;
@@ -619,6 +684,7 @@ function loadExhibitionDetailImages(exhNo) {
 document.addEventListener('DOMContentLoaded', function() {
     const exhNo = document.getElementById("exhNo").value;  
     loadExhibitionDetailImages(exhNo);
+    loadExhibitionImages(exhNo);
 });
 
 //로그인 모달을 표시하는 함수

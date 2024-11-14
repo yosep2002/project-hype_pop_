@@ -132,4 +132,11 @@ public class ExhibitionServiceImpl implements ExhibitionService {
 		return exhibitionmapper.getExhDetailImg(exhNo);
 	}
 
+
+	@Override
+	public List<exhImgVO> getExhImg(int exhNo) {
+		
+		return exhibitionmapper.getExhImg(exhNo);
+	}
+
 }

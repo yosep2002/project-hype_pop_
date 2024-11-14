@@ -50,4 +50,6 @@ public interface ExhibitionMapper {
 
 	public List<exhImgVO> getExhDetailImg(@Param("exhNo") int exhNo);
 
+	public List<exhImgVO> getExhImg(@Param("exhNo") int exhNo);
+
 }
