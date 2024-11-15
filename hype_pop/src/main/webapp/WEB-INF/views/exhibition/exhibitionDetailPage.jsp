@@ -2,6 +2,8 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
+<%@ taglib uri="http://www.springframework.org/security/tags"
+	prefix="sec"%>
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -403,7 +405,7 @@ ul {
 
 /* 이미지 컨테이너 크기 및 배치 */
 #detailedImageContainer {
-    width: 100%;  /* 원하는 너비로 설정 */
+    width: 70%;  /* 원하는 너비로 설정 */
     margin: 0 auto;  /* 가로 중앙 정렬 */
     display: flex;
     justify-content: center;  /* 이미지가 가로로 중앙 정렬되게 설정 */
@@ -476,7 +478,10 @@ ul {
 </head>
 <body>
 	<jsp:include page="layout/popUpHeader.jsp" />
-
+	<sec:authorize access="isAuthenticated()">
+		<sec:authentication property="principal" var="pinfo" />
+		<input type="hidden" id="userNo" value="${pinfo.member.userNo}">
+	</sec:authorize>
 	<br>
 
 	<div class="container">

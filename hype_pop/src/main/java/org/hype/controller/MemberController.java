@@ -35,6 +35,9 @@ import lombok.extern.log4j.Log4j;
 public class MemberController {
 
 	@Autowired
+	private PasswordEncoder pwencoder;
+
+	@Autowired
 	private MemberService mservice;
 
 	// 로그인페이지로 이동
@@ -44,19 +47,19 @@ public class MemberController {
 		return "member/login";
 	}
 
-	// 로그인 처리
-	@PostMapping("/login")
-	public String login(signInVO svo, Model model) {
-
-		signInVO member = mservice.loginMember(svo);
-
-		if (member != null) {
-			return "popUp/popUpMain";
-		} else {
-			model.addAttribute("error", "로그인을 오류입니다.");
-			return "member/login";
-		}
-	}
+//	// 로그인 처리
+//	@PostMapping("/login")
+//	public String login(signInVO svo, Model model) {
+//
+//		signInVO member = mservice.loginMember(svo);
+//
+//		if (member != null) {
+//			return "popUp/popUpMain";
+//		} else {
+//			model.addAttribute("error", "로그인을 오류입니다.");
+//			return "member/login";
+//		}
+//	}
 
 	// 회원가입
 	@GetMapping("/join")
@@ -67,38 +70,40 @@ public class MemberController {
 
 	// 회원가입 처리
 	@PostMapping("/join")
-	public String join(@ModelAttribute signInVO svo, Model model) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+	public String join(@ModelAttribute signInVO svo, Model model)
+			throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+		svo.setUserPw(pwencoder.encode(svo.getUserPw()));
 		log.warn("join!!!!!!!!!!!!!!!");
-		
-		// bean 내부의 필드 값 확인 코드 
+
+		// bean 내부의 필드 값 확인 코드
 		Method[] methods = svo.getClass().getDeclaredMethods();
-    	for (Method method : methods) {
-            // 메서드 이름이 'get'으로 시작하는지 확인
-            if (method.getName().startsWith("get")) {
-                // 메서드를 호출하여 값을 가져옴
-                Object value = method.invoke(svo);
-                System.out.println(method.getName().substring(3) + ": " + value);
-            }
-        }
-    	System.out.println("---------------------------------");
-    	methods = svo.getUserInterest().getClass().getDeclaredMethods();
-    	for (Method method : methods) {
-            // 메서드 이름이 'get'으로 시작하는지 확인
-            if (method.getName().startsWith("get")) {
-                // 메서드를 호출하여 값을 가져옴
-                Object value = method.invoke(svo.getUserInterest());
-                System.out.println(method.getName().substring(3) + ": " + value);
-            }
-        }
-    	   // **아이디 중복 체크 추가**
-        if (mservice.checkDuplicateId(svo.getUserId())) {
-            model.addAttribute("errorMessage", "이미 존재하는 아이디입니다.");
-            return "member/joinForm"; // 중복 시 회원가입 폼으로 돌아가기
-        }
-    	// 회원 가입
+		for (Method method : methods) {
+			// 메서드 이름이 'get'으로 시작하는지 확인
+			if (method.getName().startsWith("get")) {
+				// 메서드를 호출하여 값을 가져옴
+				Object value = method.invoke(svo);
+				System.out.println(method.getName().substring(3) + ": " + value);
+			}
+		}
+		System.out.println("---------------------------------");
+		methods = svo.getUserInterest().getClass().getDeclaredMethods();
+		for (Method method : methods) {
+			// 메서드 이름이 'get'으로 시작하는지 확인
+			if (method.getName().startsWith("get")) {
+				// 메서드를 호출하여 값을 가져옴
+				Object value = method.invoke(svo.getUserInterest());
+				System.out.println(method.getName().substring(3) + ": " + value);
+			}
+		}
+		// **아이디 중복 체크 추가**
+		if (mservice.checkDuplicateId(svo.getUserId())) {
+			model.addAttribute("errorMessage", "이미 존재하는 아이디입니다.");
+			return "member/joinForm"; // 중복 시 회원가입 폼으로 돌아가기
+		}
+		// 회원 가입
 		mservice.joinMember(svo);
 
-		return "member/joinSuccess";
+		return "member/login";
 
 	}
 

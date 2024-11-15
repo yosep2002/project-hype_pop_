@@ -8,6 +8,7 @@ import org.hype.domain.goodsVO;
 import org.hype.domain.likeVO;
 import org.hype.domain.mCatVO;
 import org.hype.domain.pCatVO;
+import org.hype.domain.pImgVO;
 import org.hype.domain.popStoreVO;
 import org.hype.domain.psReplyVO;
 
@@ -62,6 +63,8 @@ public interface PopUpMapper {
 
 	// 유저 번호로 좋아요 누른 팝업스토어 가져오기
 	public List<likeVO> getUserLike(int userNo);
+
+	public List<pImgVO> getPopImg(@Param("psNo") int psNo);
 
 
 

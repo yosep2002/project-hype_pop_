@@ -1,6 +1,8 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib uri="http://www.springframework.org/security/tags"
+	prefix="sec"%>
 <!DOCTYPE html>
 <html>
 <head>
@@ -203,7 +205,10 @@ a:hover {
 </head>
 <body>
 	<jsp:include page="layout/popUpHeader.jsp" />
-
+	<sec:authorize access="isAuthenticated()">
+		<sec:authentication property="principal" var="pinfo" />
+		<input type="hidden" id="userNo" value="${pinfo.member.userNo}">
+	</sec:authorize>
 	<br>
 	<div class="tab">
 		<div id="tab-announcement" class="active"
@@ -236,7 +241,9 @@ a:hover {
 			</div>
 
 			<div class="createAnnouncementBtn">
-				<input type="button" onclick="createNotice()" value="공지작성">
+				<sec:authorize access="hasRole('ROLE_ADMIN')">
+					<input type="button" onclick="createNotice()" value="공지작성">
+				</sec:authorize>
 			</div>
 		</section>
 

@@ -9,6 +9,7 @@ import org.hype.domain.goodsVO;
 import org.hype.domain.likeVO;
 import org.hype.domain.mCatVO;
 import org.hype.domain.pCatVO;
+import org.hype.domain.pImgVO;
 import org.hype.domain.popStoreVO;
 import org.hype.domain.psReplyVO;
 import org.hype.mapper.AttachMapper;
@@ -195,6 +196,13 @@ public List<popStoreVO> findNearbyStores(double lat, double lng, double radius) 
 	public List<likeVO> getUserLike(int userNo) {
 
 		return mapper.getUserLike(userNo);
+	}
+
+	// 캘린더에 필요한 이미지 가져오기
+	@Override
+	public List<pImgVO> getPopImg(int psNo) {
+		
+		return mapper.getPopImg(psNo);
 	} 
 	
 	

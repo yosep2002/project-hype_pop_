@@ -7,7 +7,9 @@ document.addEventListener("DOMContentLoaded", (event) => {
 	showSection('viewingInfo');
 });
 
-
+let userNoElement = document.getElementById("userNo");
+let userNo = userNoElement ? userNoElement.value : null;
+console.log(userNo);
 // 특정 섹션을 표시하고 나머지 섹션은 숨기기
 function showSection(visibleSectionId) {
     const sections = ['viewingInfo', 'detailsSection', 'replySection'];
@@ -121,7 +123,6 @@ function loadExhibitionImages(exhNo) {
 // 좋아요 표시 기능
 function toggleHeart(element) {
     const exhNo = document.getElementById("exhNo").value;
-    const userNo = localStorage.getItem("userNo");
 
     // userNo가 없으면 로그인 모달을 띄운다
     if (!userNo) {
@@ -182,7 +183,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
 document.addEventListener("DOMContentLoaded", function() {
     var exhNo = document.getElementById("exhNo").value;
-    var userNo = localStorage.getItem("userNo");
 
     // 유저가 이미 댓글을 작성했는지 확인하는 AJAX 요청
     var xhrCheck = new XMLHttpRequest();
@@ -208,7 +208,6 @@ document.getElementById("addReply").onclick = function() {
     var reviewText = document.getElementById("reviewText").value;
     var selectedRating = document.querySelector("#selectedRating span").textContent; // 선택한 별점 값을 가져옴
     var exhNo = document.getElementById("exhNo").value;
-    var userNo = localStorage.getItem("userNo"); 
     var reviewForm = document.getElementById("reviewForm");
 
     if (!userNo) {
@@ -242,7 +241,6 @@ function registerReview() {
     var reviewText = document.getElementById("reviewText").value;
     var selectedRating = document.querySelector("#selectedRating span").textContent;
     var exhNo = document.getElementById("exhNo").value;
-    var userNo = localStorage.getItem("userNo");
     var reviewForm = document.getElementById("reviewForm");
 
     // 유효성 검사
@@ -287,7 +285,6 @@ let currentPage = 1;  // 현재 페이지 추적을 위한 변수 추가
 const pageSize = 5;   // 한 페이지에 표시할 리뷰 개수
 
 function fetchAndDisplayReviews(exhNo, page = 1) {
-    const userNo = localStorage.getItem("userNo");
 
     // Fetch 요청에 pageSize와 page를 포함시킴
     fetch(`/exhibition/userReviews?exhNo=${exhNo}&page=${page}&pageSize=${pageSize}`)

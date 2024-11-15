@@ -2,7 +2,9 @@ let currentPage = 1;
 let totalPages = 0; 
 let inquiryList = document.querySelector('.inquiry-list');
 let createInquiryBtn = document.querySelector('.createInquiryBtn');
-const userNo = localStorage.getItem("userNo");
+let userNoElement = document.getElementById("userNo");
+let userNo = userNoElement ? userNoElement.value : null;
+console.log(userNo);
 var isLoggedIn = (userNo !== null && userNo !== undefined && userNo !== '');
 
 if (userNo) {

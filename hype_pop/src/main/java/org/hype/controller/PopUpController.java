@@ -1,24 +1,35 @@
 package org.hype.controller;
 
 
+import java.io.File;
+import java.net.MalformedURLException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import org.hype.domain.exhImgVO;
 import org.hype.domain.goodsVO;
 import org.hype.domain.likeVO;
 import org.hype.domain.mCatVO;
 import org.hype.domain.pCatVO;
+import org.hype.domain.pImgVO;
 import org.hype.domain.popStoreVO;
 import org.hype.domain.psReplyVO;
 import org.hype.service.PopUpService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -181,6 +192,7 @@ public class PopUpController {
     public String showCalendarPage() {
         return "/popUpCalendar/calendarMain";  
     }
+    
     @PostMapping(value = "/likeCount", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public ResponseEntity<Map<String, Object>> LikeCount(@RequestBody likeVO likeVO) {
@@ -301,6 +313,50 @@ public class PopUpController {
         model.addAttribute("goodsInfo", gvo);
         
         return "/popUp/popUpDetailsPage"; // 상세 정보를 보여주는 JSP 경로
+    }
+    
+    // 캘린더에 쓸 팝업이미지 가져오기
+    @GetMapping(value = "/getPopUpImage", produces = MediaType.APPLICATION_JSON_VALUE)
+	@ResponseBody
+	public List<pImgVO> getPopUpImage(@RequestParam("psNo") int psNo) {
+
+	    List<pImgVO> popUpStore = service.getPopImg(psNo);
+	    return popUpStore;
+	}
+	
+	@GetMapping("/popUpStoreImages/{fileName:.+}")
+    @ResponseBody
+    public ResponseEntity<Resource> serveImage(@PathVariable String fileName) throws MalformedURLException {
+    	String[] parts = fileName.split("_", 2);
+	    if (parts.length != 2) {
+	        throw new RuntimeException("파일 이름 형식이 잘못되었습니다. 형식: uuid_fileName");
+	    }
+	    String uuid = parts[0];  
+	    String originalFileName = parts[1];  
+
+	    // 파일이 저장된 경로
+	    String uploadFolder = "\\\\192.168.0.129\\storeGoodsImg\\팝업스토어 사진";
+	    String imagePath = uploadFolder + File.separator + uuid + "_" + originalFileName;
+	    Path path = Paths.get(imagePath);
+
+	    // 경로 로그로 출력 (디버깅용)
+	    System.out.println("이미지 경로: " + path.toString());
+
+	    // 파일이 존재하지 않으면 예외 처리
+	    if (!Files.exists(path)) {
+	        throw new RuntimeException("파일이 존재하지 않습니다: " + fileName);
+	    }
+
+	    // 파일이 읽을 수 없으면 예외 처리
+	    if (!Files.isReadable(path)) {
+	        throw new RuntimeException("파일을 읽을 수 없습니다: " + fileName);
+	    }
+
+	    // 파일을 리소스로 읽어 반환
+	    Resource file = new FileSystemResource(path.toFile());
+	    return ResponseEntity.ok()
+	        .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + originalFileName + "\"")
+	        .body(file);
     }
 }
   

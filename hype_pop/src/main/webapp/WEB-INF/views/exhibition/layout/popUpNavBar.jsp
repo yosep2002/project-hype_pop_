@@ -42,12 +42,16 @@
     </div>
 </body>
 <script type="text/javascript">
-    function logout(){
+    function logout() {
         // localStorage에서 userNo 삭제
         localStorage.removeItem('userNo');
-       
+        
+        // Spring Security 로그아웃 URL로 리디렉션 (로그아웃 처리)
+        window.location.href = '/logout';
+        
         // 페이지 리로드
         location.reload();
     }
 </script>
+
 </html>

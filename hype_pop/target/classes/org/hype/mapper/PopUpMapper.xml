@@ -259,5 +259,19 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		select * from like_list_tbl where userNo = #{userNo}
 	</select>
 
+	<select id="getPopImg" resultType="org.hype.domain.pImgVO">
+    <![CDATA[
+        SELECT psNo, uuid, uploadpath AS uploadPath, filename AS fileName
+        FROM (
+            SELECT em.psNo, em.uuid, em.uploadpath, em.filename
+            FROM pop_img_tbl em
+            LEFT JOIN like_list_tbl el ON em.psNo = el.psNo
+            GROUP BY em.psNo, em.uuid, em.uploadpath, em.filename
+            ORDER BY COUNT(el.psNo) DESC
+        ) imgDetails
+        WHERE psNo = #{psNo}
+    ]]>
+	</select>
+
 
 </mapper>
