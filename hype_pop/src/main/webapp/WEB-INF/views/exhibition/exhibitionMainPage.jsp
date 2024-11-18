@@ -238,7 +238,7 @@ th {
 </style>
 </head>
 <body>
-   <jsp:include page="layout/popUpHeader.jsp" />
+   <jsp:include page="layout/exhibitionHeader.jsp" />
 
    <br>
 
@@ -280,7 +280,7 @@ th {
    <hr>
    <br>
 
-   <jsp:include page="layout/popUpFooter.jsp" />
+   <jsp:include page="layout/exhibitionFooter.jsp" />
    <script type="text/javascript" src="/resources/popUpJs/popUpMain.js"></script>
    <script type="text/javascript"
       src="/resources/exhibitionJs/exhibitionMain.js"></script>

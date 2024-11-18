@@ -3,7 +3,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta charset="EUC-KR">
+    <meta charset="UTF-8">
     <title>Insert title here</title>
     <style>
         body {
@@ -32,7 +32,7 @@
 </head>
 <body>
 
-    <div class="navBar">
+       <div class="navBar">
         <a href="/hypePop/search/noData">팝업스토어 전체 보기</a>
         <a href="/goodsStore/goodsSearch" id="searchReset">굿즈 전체 보기</a>
         <a href="/exhibition/exhibitionMain">전시회 메인 페이지</a>
@@ -46,7 +46,6 @@
         <a href="/member/myPage?userNo=1">마이페이지</a>
         </sec:authorize>
     </div> 
-    
 
 </body>
 

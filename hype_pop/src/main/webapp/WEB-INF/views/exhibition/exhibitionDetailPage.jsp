@@ -20,11 +20,13 @@ body {
    max-width: 1200px;
    margin: 20px auto;
    padding: 20px;
-   background: #fff;
-   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+   background: #fee7ed; /* 핑크색 배경 */
+   box-shadow: none; /* 그림자 없애기 */
+   border: none; /* 보더를 아예 없애기 */
    border-radius: 8px;
    display: flex;
 }
+
 
 .image {
    width: 100%;
@@ -73,7 +75,7 @@ h2 {
    margin: 20px auto;
    padding: 15px;
    max-width: 1200px;
-   background: #fff;
+   background: #e0f7ff;
    border: 2px solid #333;
    border-radius: 5px;
    display: none;
@@ -117,7 +119,7 @@ th {
 }
 
 td {
-   background-color: #f9f9f9;
+   background-color: #e0f7ff;
 }
 /* 별점 및 후기 스타일 */
 .starRating span {
@@ -126,7 +128,7 @@ td {
    color: gray;
 }
 
-.starRating span:hover, .starRating span.active {
+.starRating span.active {
    color: gold;
 }
 
@@ -187,7 +189,8 @@ td {
 #selectedRating {
    margin-bottom: 15px;
    text-align: center;
-   color: white;
+   color: black;
+   font-weight: bold; /* 폰트를 두껍게 설정 */
 }
 
 #reviewForm {
@@ -224,6 +227,7 @@ td {
    cursor: pointer;
    border-radius: 5px;
    transition: background-color 0.3s;
+   float: right;
 }
 
 #addReply:hover {
@@ -322,14 +326,29 @@ ul {
     height: auto; /* 이미지 비율을 유지하면서 높이를 자동으로 맞추기 */
     object-fit: cover; /* 이미지의 비율을 유지하면서 컨테이너에 맞게 잘라내기 */
 }
+.background-image {
+    display: block;
+    width: 100%; /* 이미지의 가로 크기 조정 */
+    height: auto; /* 이미지의 세로 비율 유지 */
+}
 
 #likeContainer {
-    position: absolute; /* 절대 위치 설정 */
-    top: 10px; /* 상단 위치 */
-    right: 10px; /* 오른쪽 위치 */
-    display: flex; /* 수평으로 나열하기 위해 flex 사용 */
+    position: absolute; /* 이미지 위에 겹쳐 배치 */
+    top: 10px; /* 위쪽에서 10px 떨어짐 */
+    right: 10px; /* 오른쪽에서 10px 떨어짐 */
+    background-color: rgba(0, 0, 0, 0.6); /* 반투명 검은색 배경 */
+    color: white; /* 텍스트 색상 흰색 */
+    padding: 5px 10px; /* 안쪽 여백 조정 */
+    border-radius: 5px; /* 모서리를 둥글게 */
+    text-align: center; /* 내용 중앙 정렬 */
+    z-index: 10; /* 이미지 위에 표시 */
+    font-size: 14px; /* 글자 크기 작게 조정 */
+    display: flex; /* 일자 배치를 위한 flexbox 사용 */
     align-items: center; /* 수직 중앙 정렬 */
-    z-index: 10; /* 이미지 위에 표시되도록 z-index 설정 */
+    justify-content: flex-start; /* 가로로 나열 */
+}
+#likeContainer p {
+    margin-right: 5px; /* 텍스트와 하트 간 간격 */
 }
 
 #likeCount {
@@ -476,7 +495,7 @@ ul {
 </style>
 </head>
 <body>
-   <jsp:include page="layout/popUpHeader.jsp" />
+   <jsp:include page="layout/exhibitionHeader.jsp" />
    <sec:authorize access="isAuthenticated()">
       <sec:authentication property="principal" var="pinfo" />
       <input type="hidden" id="userNo" value="${pinfo.member.userNo}">
@@ -488,7 +507,7 @@ ul {
          
          <div id="likeContainer">
             <p id="likeCount"></p>
-            <span class="heart" id="heartIcon" onclick="toggleHeart(this)">&#9825;</span>
+            <span class="heart" id="heartIcon" onclick="toggleHeart(this)">❤️</span>
          </div>
       </div>
       <div class="info-section">
@@ -609,7 +628,7 @@ ul {
    <hr>
    <br>
 
-   <jsp:include page="layout/popUpFooter.jsp" />
+   <jsp:include page="layout/exhibitionFooter.jsp" />
    <script type="text/javascript" src="/resources/popUpJs/popUpMain.js"></script>
    <script type="text/javascript"
       src="/resources/exhibitionJs/exhibitionDetail.js"></script>
