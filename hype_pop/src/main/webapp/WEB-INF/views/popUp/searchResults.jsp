@@ -61,6 +61,3 @@
         </div>
     </c:forEach>
 </div>
-
-<!-- 더보기 버튼 -->
-<button id="loadMoreBtn">더보기</button>

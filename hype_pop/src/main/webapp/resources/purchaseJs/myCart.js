@@ -118,6 +118,8 @@ function calculateTotal() {
         grandTotal += itemTotal;
     });
     document.getElementById('grandTotal').innerText = grandTotal.toLocaleString(); // 총 가격 표시
+    document.getElementById('grandTotalInput').innerText = grandTotal;
+
 }
 
 // 수량 변경에 따른 가격 변경 함수
@@ -165,17 +167,43 @@ function deleteItem(gno) {
 
 }
 
-//내 결제 목록 가기
-document.getElementById('addToCart').addEventListener('click', function() {
-
-   location.href="/purchase/goPaymentList";
-});
 
 
-function goPayInfo(){
-   const grandTotal = document.getElementById("grandTotal").innerText;
-   const userNo = document.getElementById('userNo').value; 
-   location.href="/purchase/getPayInfo?totalPrice=" + grandTotal+"&userNo=" + userNo;;
+//function goPayInfo(){
+//   const grandTotal = document.getElementById("grandTotal").innerText;
+//   const userNo = document.getElementById('userNo').value; 
+//   location.href="/purchase/getPayInfo?totalPrice=" + grandTotal+"&userNo=" + userNo;
+//}
+
+function prepareCartData() {
+    const cartItems = document.querySelectorAll('.cart-item');
+    const cartData = [];
+    const grandTotal = document.getElementById('grandTotal').innerText;
+    
+    const userNo = document.getElementById('userNo').value; 
+
+    cartItems.forEach((item) => {
+        const gno = item.id.split('-')[1];
+        const gname = item.querySelector('h4').innerText.replace('굿즈 이름 : ', '').trim();
+        const gprice = item.querySelector('.price').innerText.trim();
+        const camount = item.querySelector(`#quantity-${gno}`).value;
+
+        // 장바구니 데이터 객체 생성
+        cartData.push({
+            gno: gno,
+            gname: gname,
+            gprice: parseInt(gprice.replace(',', '')),
+            camount: parseInt(camount),
+            
+        });
+    });
+
+    // 데이터를 hidden 필드에 설정
+    document.getElementById('hiddenGrandTotal').value = grandTotal.replace(',', '').trim();
+    document.getElementById('hiddenCartData').value = JSON.stringify(cartData);
+
+    // 폼 제출
+    document.getElementById('cartForm').submit();
 }
 
 

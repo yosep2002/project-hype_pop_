@@ -86,23 +86,33 @@ body {
       <h2>결제 목록</h2>
    </header>
 
-   <section class="purchase-list">
-      <c:forEach var="item" items="${getPayList}">
-         <div class="purchase-item">
+<section class="purchase-list">
+   <c:forEach var="item" items="${getPayList}">
+      <div class="purchase-item">
+         <!-- 이미지 출력 부분 -->
+         <c:if test="${not empty item.gimg}">
             <c:forEach var="img" items="${item.gimg}">
-               <img src="${img.uploadPath}/${img.uuid}_${img.fileName}"
-                  alt="${item.gname}" class="item-image">
+               <div class="image-payList" id="item-${item.gno}" 
+                    data-file-name="${img.uuid}_${img.fileName}">
+                  <!-- background-image로 이미지 설정 -->
+                  <div class="image-container"
+                       style="background-image: url('/path/to/images/${img.uuid}_${img.fileName}');">
+                  </div> <!-- 이미지 컨테이너 닫기 -->
+               </div> <!-- 이미지-payList div 닫기 -->
             </c:forEach>
-            <div class="item-details">
-               <h3 class="item-name">상품명: ${item.gname}</h3>
-               <p class="item-quantity">수량: ${item.camount}</p>
-               <p class="item-price">가격: ${item.gprice}원</p>
-               <p class="item-date">구매 날짜: ${item.gbuyDate}</p>
-               <p class="item-status">상품 현황: ${item.gsituation}</p>
-            </div>
+         </c:if>
+
+         <div class="item-details">
+            <h3 class="item-name">상품명: ${item.gname}</h3>
+            <p class="item-quantity">수량: ${item.camount}</p>
+            <p class="item-price">가격: ${item.gprice}원</p>
+            <p class="item-date">구매 날짜: ${item.gbuyDate}</p>
+            <p class="item-status">상품 현황: ${item.gsituation}</p>
          </div>
-      </c:forEach>
-   </section>
+      </div> <!-- purchase-item div 닫기 -->
+   </c:forEach>
+</section>
+
 
    <div class="pagination">
       <c:if test="${currentPage > 1}">

@@ -41,16 +41,16 @@ public class PurchaseController {
 
       
    
-    // 장바구니 페이지로 이동
+    // �옣諛붽뎄�땲 �럹�씠吏�濡� �씠�룞
     @GetMapping("/goCart")
     public String goCart(int userNo,  Model model) {
-        log.info("장바구니로 이동,userNo :" + userNo);
+        log.info("�옣諛붽뎄�땲濡� �씠�룞,userNo :" + userNo);
    
         
        
         List<cartVO> cartInfo = pservice.getCartInfo(userNo); 
         
-        //장바구니 굿즈 정보
+        //�옣諛붽뎄�땲 援우쫰 �젙蹂�
         model.addAttribute("cartInfo", cartInfo);
       
         
@@ -60,10 +60,10 @@ public class PurchaseController {
     
 
     
-    //결제자 정보 가져오기
+    //寃곗젣�옄 �젙蹂� 媛��졇�삤湲�
     @GetMapping("/getPayInfo")
     public String getPayInfo(@RequestParam("userNo") int userNo, Model model) {
-       log.info("결제 정보 불러오기.." + userNo);
+       log.info("寃곗젣 �젙蹂� 遺덈윭�삤湲�.." + userNo);
        
        signInVO payInfo = pservice.getPayInfo(userNo);
        //int price = pservice.getPrice(userNo);
@@ -79,28 +79,28 @@ public class PurchaseController {
     
     
     
-    //결제한 상품 목록 pay_list_tbl에 넣기
-    @GetMapping("/addToPayList")
-    public String addToPayList(cartVO cvo, Model model) {
-       
-       log.info("addToPayList.." + cvo);
-       
-       int addToPayList = pservice.addToPayList(cvo);
-   
-       
-       model.addAttribute("addToPayList", addToPayList);
-    
-       
-       return "/purchase/purchaseComplete"; 
-       
-       
-    }
+//    //寃곗젣�븳 �긽�뭹 紐⑸줉 pay_list_tbl�뿉 �꽔湲�
+//    @GetMapping("/addToPayList")
+//    public String addToPayList(cartVO cvo, Model model) {
+//       
+//       log.info("addToPayList.." + cvo);
+//       
+//       int addToPayList = pservice.addToPayList(cvo);
+//   
+//       
+//       model.addAttribute("addToPayList", addToPayList);
+//    
+//       
+//       return "/purchase/purchaseComplete"; 
+//       
+//       
+//    }
     
    
  
     
     
-    // 내가 결제한 상품 목록 가기
+    // �궡媛� 寃곗젣�븳 �긽�뭹 紐⑸줉 媛�湲�
     @GetMapping("/getPayList")
     public String getPaymentList(@RequestParam("userNo") int userNo, Model model) {
         log.info("getPaymentList...: " + userNo); 
@@ -109,13 +109,14 @@ public class PurchaseController {
         
         pservice.threeDayGbuyDate();
         
-        // 사용자 번호로 결제 목록 가져오기
+        // �궗�슜�옄 踰덊샇濡� 寃곗젣 紐⑸줉 媛��졇�삤湲�
         List<payVO> getPayList = pservice.getPayList(userNo);
+        
         
         
         for(payVO pay:  getPayList) {
            int gno = pay.getGno();
-           log.info("gnognogno..." + gno);      
+           log.info("gnognogno..." + gno);    
            List<gImgVO> imgList = pservice.getPayListImg(gno);
            log.info("imgList..." + imgList);
            pay.setGimg(imgList);
@@ -128,7 +129,7 @@ public class PurchaseController {
     }
     
     
-    //결제 성공 축하 짝짝짝
+    //寃곗젣 �꽦怨� 異뺥븯 吏앹쭩吏�
     @GetMapping("/purchaseComplete")
     public String purchaseComplete() {
        return "/purchase/purchaseComplete";
@@ -139,24 +140,24 @@ public class PurchaseController {
     
     
     
-    // 결제 정보 입력 및 결제 처리
+    // 寃곗젣 �젙蹂� �엯�젰 諛� 寃곗젣 泥섎━
     @PostMapping("/processPurchase")
     public String processPurchase(@RequestParam("orderId") String orderId, 
                                   @RequestParam("paymentMethod") String paymentMethod, 
                                   @RequestParam("shippingAddress") String shippingAddress, 
                                   Model model) {
-        log.info("결제 정보 처리 중: 주문 ID = " + orderId);
+        log.info("寃곗젣 �젙蹂� 泥섎━ 以�: 二쇰Ц ID = " + orderId);
 
-        // 주석: 결제 처리 로직 필요
+        // 二쇱꽍: 寃곗젣 泥섎━ 濡쒖쭅 �븘�슂
         // boolean paymentSuccess = purchaseService.processPayment(orderId, paymentMethod, shippingAddress);
         
-        // 주석: 결제 성공 여부에 따른 결과 페이지 반환
+        // 二쇱꽍: 寃곗젣 �꽦怨� �뿬遺��뿉 �뵲瑜� 寃곌낵 �럹�씠吏� 諛섑솚
         // if (paymentSuccess) {   
-        //     model.addAttribute("message", "결제가 성공적으로 완료되었습니다.");
-        //     return "/purchase/purchaseSuccess"; // 결제 성공 페이지로 이동
+        //     model.addAttribute("message", "寃곗젣媛� �꽦怨듭쟻�쑝濡� �셿猷뚮릺�뿀�뒿�땲�떎.");
+        //     return "/purchase/purchaseSuccess"; // 寃곗젣 �꽦怨� �럹�씠吏�濡� �씠�룞
         // } else {
-        //     model.addAttribute("error", "결제 처리에 실패했습니다.");
-           return "/purchase/goodsPurchase"; // 결제 실패 시 다시 결제 페이지로 이동
+        //     model.addAttribute("error", "寃곗젣 泥섎━�뿉 �떎�뙣�뻽�뒿�땲�떎.");
+           return "/purchase/goodsPurchase"; // 寃곗젣 �떎�뙣 �떆 �떎�떆 寃곗젣 �럹�씠吏�濡� �씠�룞
         // }
     }
 }

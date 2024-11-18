@@ -4,8 +4,15 @@ let userNo = document.getElementById('userNo').value;
 let currentPage = 1; // 현재 페이지를 저장할 변수
 const amount = 10; // 한 페이지에 보여줄 리뷰 수
 
-
+checkUserLiked(psNo, userNo);
 fetchOtherReviews(psNo, userNo, page = 1);
+
+function updateCancel() {
+    const updateForm = document.getElementById('updateForm');
+    updateForm.style.display = 'none';  // 수정 폼 숨기기
+    document.getElementById('updateText').value = '';  // 텍스트 필드 초기화
+    document.getElementById('rating').value = ''; // 별점 초기화
+}
 
 
 // 리뷰 작성 가능 여부 체크
@@ -30,6 +37,11 @@ function canWriteReview(psNo, userNo) {
         return false; // 오류 발생 시 기본적으로 작성 불가
     });
 }
+
+
+
+
+
 function loadUserReviews(reviews) {
     const reviewList = document.getElementById('reviewList');
     const noReviewMessage = document.getElementById('noReviewMessage');
@@ -98,8 +110,8 @@ function loadUserReviews(reviews) {
         if (review) {
             const kebabMenuOptions = `
                 <ul class="kebabMenuOptions" style="display: none;">
-                    <li class="editReview">수정</li>
-                    <li class="deleteReview">삭제</li>
+                   <li class="editReview" style="list-style-type: none;">수정</li>
+                   <li class="deleteReview" style="list-style-type: none;">삭제</li>
                 </ul>
             `;
             row.querySelector('.kebabMenu').insertAdjacentHTML('afterend', kebabMenuOptions);
@@ -117,6 +129,7 @@ function loadUserReviews(reviews) {
             document.addEventListener('click', function () {
                 document.querySelectorAll('.kebabMenuOptions').forEach(menu => menu.style.display = "none");
             });
+         
 
             kebabMenuOptionsEl.querySelector('.editReview').addEventListener('click', function () {
                 // 수정 폼을 찾습니다.
@@ -139,7 +152,7 @@ function loadUserReviews(reviews) {
                     star.style.color = (parseInt(star.getAttribute('data-value')) <= selectedRating) ? 'gold' : 'gray'; // 선택된 별점에 따라 색상 변경
                 });
             });
-             
+          
             kebabMenuOptionsEl.querySelector('.deleteReview').addEventListener('click', function () {
                 if (confirm("리뷰를 삭제하시겠습니까?")) {
                     fetch('/reply/deleteReview', {
@@ -272,6 +285,40 @@ function fetchUserReviews(psNo, userNo) {
 
 // DOMContentLoaded 이벤트 핸들러
 document.addEventListener("DOMContentLoaded", function () {
+	  // 'fileData' 클래스의 input 요소에서 값을 가져오기
+
+
+	const fileData = document.querySelector(".fileData");
+
+	if (fileData) {
+	    const fileName = fileData.value; // 이미 uuid와 filename이 결합된 값이므로 바로 사용
+	    const imgElement = document.querySelector(".popUpbanner img");
+
+	    console.log("파일 이름은 : " + fileName);  // 결합된 파일 이름을 로그로 출력
+
+	    if (fileName) {
+	        // 파일 이름 그대로 이미지 경로를 생성
+	        fetch(`/hypePop/images/${fileName}`)
+	            .then(response => {
+	                if (response.ok) {
+	                    return response.blob();
+	                } else {
+	                    throw new Error('이미지를 불러올 수 없습니다.');
+	                }
+	            })
+	            .then(blob => {
+	                // 이미지 Blob을 URL로 변환하여 이미지 소스로 설정
+	                const imageUrl = URL.createObjectURL(blob);
+	                imgElement.src = imageUrl;  // 이미지를 동적으로 설정
+	            })
+	            .catch(error => {
+	                console.error('이미지 로드 실패:', error);
+	            });
+	    }
+	} else {
+	    console.log("파일 데이터가 존재하지 않습니다.");
+	}
+	
     let psNo = document.getElementById('psNo').value;
     let userNo = document.getElementById('userNo').value;
 	
@@ -312,29 +359,32 @@ document.addEventListener("DOMContentLoaded", function () {
 document.querySelectorAll('#likeCount').forEach(button => {
     button.addEventListener('click', (event) => {
         event.preventDefault();
-        console.log("좋아요 버튼 클릭");
-
-        let psNo = document.getElementById('psNo').value;  // 팝업스토어 번호
-        let userNo = document.getElementById('userNo').value; // 사용자 번호
+        let psNo = document.getElementById('psNo').value;
+        let userNo = document.getElementById('userNo').value;
 
         fetch('/hypePop/likeCount', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ psNo: psNo, userNo: userNo }) // JSON 형식으로 전송
+            body: JSON.stringify({ psNo: psNo, userNo: userNo })
         })
         .then(response => {
             if (response.ok) {
-                // 좋아요 수 업데이트
-                updateLikeCount(psNo);
+            	console.log("체크하는 곳에 보낸 userNo는? : " + userNo);
+            	console.log("체크하는 곳에 보낸 psNo? : " + psNo);
+                checkUserLiked(psNo, userNo); // 좋아요 상태 확인 및 이미지 변경
+                updateLikeCount(psNo)
             } else {
-                alert("이미 좋아요를 눌렀습니다!"); // 이미 눌렀을 때 알림
+            	checkUserLiked(psNo, userNo);  // 이미 눌렀을 때 알림
+            	 updateLikeCount(psNo)
             }
         })
         .catch(err => console.error('Error:', err));
     });
 });
+
+
 
 // 좋아요 수 업데이트 함수
 function updateLikeCount(psNo) {
@@ -357,7 +407,7 @@ function updateLikeCount(psNo) {
             const totalLikeCountElement = document.getElementById('totalLikeCount');
             // 좋아요 수 업데이트
             if (totalLikeCountElement) { // 요소 존재 여부 확인
-                totalLikeCountElement.textContent = `좋아요 수: ${data.likeCount}`; // 좋아요 수 업데이트
+                totalLikeCountElement.textContent = `❤️ ${data.likeCount}`; // 좋아요 수 업데이트
             } else {
                 console.error('전체 좋아요 수 요소를 찾을 수 없습니다.');
             }
@@ -524,26 +574,28 @@ document.getElementById("toggleGoodsList").addEventListener("change", function()
     }
 });
 
-// 호출 시 psNo와 userNo를 전달하여 초기 리뷰 로드
 
-// 사용자의 좋아요 상태 체크 함수
-//function checkUserLikeStatus(psNo, userNo) {
-//    fetch('/hypePop/checkUserLike', {
-//        method: 'POST',
-//        headers: {
-//            'Content-Type': 'application/json'
-//        },
-//        body: JSON.stringify({ psNo: psNo, userNo: userNo })
-//    })
-//    .then(response => response.json())
-//    .then(data => {
-//        // 좋아요 상태와 총 좋아요 수 업데이트
-//        updateLikeCount(psNo, data.hasLiked); // 하트 상태와 좋아요 수 업데이트
-//    })
-//    .catch(error => {
-//        console.error('오류 발생:', error);
-//    });
-//}
-//
-
-
+//좋아요 상태 확인 함수
+function checkUserLiked(psNo, userNo) {
+    fetch('/hypePop/checkUserLiked', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ psNo: psNo, userNo: userNo })
+    })
+    .then(response => response.json())
+    .then(data => {
+        console.log("받은 데이터는 ? :", data); // { liked: true } 또는 { liked: false }
+        
+        const likeButton = document.getElementById('likeButton'); // 좋아요 버튼의 ID를 가져옴
+        if (data.liked) { // true이면 좋아요가 눌린 상태
+            document.querySelector('#likeIcon').src = '/resources/images/fullHeart.png';  // 변경할 이미지 경로
+        } else { // false이면 좋아요가 눌리지 않은 상태
+            document.querySelector('#likeIcon').src = '/resources/images/emptyHeart.png';  
+        }
+    })
+    .catch(err => {
+        console.error('좋아요 상태 확인 중 오류 발생:', err);
+    });
+}

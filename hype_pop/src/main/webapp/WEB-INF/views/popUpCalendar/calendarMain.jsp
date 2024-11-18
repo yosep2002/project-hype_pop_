@@ -17,14 +17,15 @@ body {
 	margin: 0;
 	padding: 0;
 	overflow-x: hidden; /* 수평 스크롤 방지 */
+	background-color: #f7f9fc; /* 연한 하늘색 배경 */
 }
 
 .tab {
 	display: flex;
 	justify-content: center;
-	background-color: #f1f1f1;
+	background-color: #fce4ec; /* 연한 핑크색 배경 */
 	padding: 10px 0;
-	border-bottom: 2px solid #ccc;
+	border-bottom: 2px solid #f48fb1; /* 밝은 핑크색 */
 }
 
 .tab div {
@@ -36,11 +37,11 @@ body {
 }
 
 .tab div:hover {
-	background-color: #ddd;
+	background-color: #f1c6d0; /* 연한 핑크색 hover */
 }
 
 .tab .active {
-	background-color: #007bff;
+	background-color: #4caf50; /* 녹색으로 선택된 탭 색상 */
 	color: white;
 }
 
@@ -55,23 +56,23 @@ body {
 	max-width: 90%; /* 너비를 70%로 설정 */
 	margin: 20px;
 	padding: 20px;
-	background-color: #fff;
+	background-color: #ffffff; /* 흰색 배경 */
 	border-radius: 5px;
 	box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 	min-width: 300px; /* 최소 너비 설정 */
 }
 
 .popUpList {
-    position: sticky;
-    top: 100px;
-    max-width: 40%;
-    margin: 20px;
-    padding: 20px;
-    background-color: lightgreen;
-    border-radius: 5px;
-    min-width: 500px;
-    max-height: 700px;
-    overflow-y: auto;
+	position: sticky;
+	top: 100px;
+	max-width: 30%;
+	margin: 20px;
+	padding: 20px;
+	background-color: #b3e5fc; /* 하늘색 배경 */
+	border-radius: 5px;
+	min-width: 350px;
+	max-height: 700px;
+	overflow-y: auto;
 }
 
 .popUpItem {
@@ -80,31 +81,46 @@ body {
     justify-content: flex-start; /* 좌측 정렬 */
     margin-bottom: 20px; /* 아이템 간 간격 */
     width: 100%; /* 전체 너비 */
+    border: 2px solid #ccc; /* 테두리 추가 */
+    border-radius: 8px; /* 테두리 둥글게 */
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* 그림자 효과 */
+    transition: all 0.3s ease; /* 호버 시 부드럽게 전환 */
+    padding: 10px; /* 내부 여백 추가 */
 }
 
+.popUpItem:hover {
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2); /* 호버 시 그림자 효과 강조 */
+    transform: translateY(-5px); /* 마우스 올렸을 때 살짝 위로 올라가는 효과 */
+    border-color: #007BFF; /* 호버 시 테두리 색 변경 */
+}
 .itemInfo {
-    width: 50%; /* 텍스트 영역은 50% */
+    width: 30%; 
+    height: 300px;
+    overflow: hidden;
 }
 
 .itemInfo ul {
-    padding-left: 0;
-    list-style: none; /* 기본 불릿 제거 */
-    margin: 0;
+	padding-left: 0;
+	list-style: none; /* 기본 불릿 제거 */
+	margin: 0;
 }
 
 .itemInfo ul li {
     font-size: 14px; /* 글자 크기 */
     line-height: 1.6; /* 줄 간격 */
     display: block; /* li 항목을 블록으로 설정 */
-    overflow: hidden;
-    text-overflow: ellipsis; /* 내용이 길면 '...' 추가 */
-    white-space: nowrap; /* 텍스트 줄 바꿈 방지 */
-    max-width: 300px; /* li의 최대 너비 제한 */
+    margin-bottom: 10px; /* li 간 간격 추가 */
+    overflow: visible; /* 텍스트가 잘리지 않도록 설정 */
+    text-overflow: unset; /* ellipsis 사용하지 않음 */
+    white-space: normal; /* 텍스트 줄 바꿈 가능 */
+    max-width: 100%; /* 최대 너비 제한 없애기 */
+    height: auto; /* 높이를 자동으로 늘려서 내용이 모두 보이도록 설정 */
 }
 
+
 .itemInfo ul li strong {
-    color: #333; /* 강조 텍스트 색상 */
-    font-weight: bold;
+	color: #00796b; /* 다크한 초록색 강조 텍스트 */
+	font-weight: bold;
 }
 
 .all-list {
@@ -145,7 +161,7 @@ section.active {
 	border: 1px solid #ccc;
 	text-align: center;
 	padding: 5px;
-	font-size: 7.5px;
+	font-size: 7px;
 	width: 35px; /* 고정된 너비 설정 */
 	height: 35px; /* 고정된 높이 설정 */
 	vertical-align: middle; /* 수직 중앙 정렬 */
@@ -158,9 +174,9 @@ section.active {
 }
 
 .calendar-table td.today {
-	background-color: yellow; /* 배경색을 노란색으로 */
+	background-color: #ffeb3b; /* 노란색 배경 */
 	font-weight: bold; /* 글자를 굵게 */
-	border: 2px solid red; /* 테두리를 빨간색으로 */
+	border: 2px solid #e65100; /* 테두리를 진한 주황색 */
 	font-size: 12px;
 }
 
@@ -179,15 +195,15 @@ thead th {
 }
 
 .schedule {
-	width: 25px; /* 고정된 너비 설정 */
-	height: 25px; /* 고정된 높이 설정 */
+	width: 20px; /* 고정된 너비 설정 */
+	height: 20px; /* 고정된 높이 설정 */
 	vertical-align: middle; /* 수직 중앙 정렬 */
 }
 
 .schedule-1 {
-	width: 25px; /* 고정된 너비 설정 */
-	height: 25px;; /* 고정된 높이 설정 */
-	background-color: purple;
+	width: 20px; /* 고정된 너비 설정 */
+	height: 20px;; /* 고정된 높이 설정 */
+	background-color: #ff4081; /* 핑크색 배경 */
 	background-image: linear-gradient(135deg, transparent 25%, rgba(255, 255, 255, 0.5)
 		25%, rgba(255, 255, 255, 0.5) 50%, transparent 50%, transparent 75%,
 		rgba(255, 255, 255, 0.5) 75%, rgba(255, 255, 255, 0.5));
@@ -198,16 +214,16 @@ thead th {
 	background-color: blue; /* 파란색 배경 */
 	color: white; /* 글자색 흰색 */
 	font-size: auto;
-	width: 25px;
-	height: 25px;
+	width: 20px;
+	height: 20px;
 }
 
 .schedule-end {
 	background-color: red; /* 빨간색 배경 */
 	color: white; /* 글자색 흰색 */
 	font-size: auto;
-	width: 25px;
-	height: 25px;
+	width: 20px;
+	height: 20px;
 }
 
 .checkBoxList {
@@ -215,7 +231,7 @@ thead th {
 	flex-wrap: wrap;
 	justify-content: center;
 	max-width: 100%;
-	background-color: #f0f0f0;
+	background-color: #fce4ec; /* 연한 핑크색 배경 */
 	padding: 10px;
 }
 
@@ -234,6 +250,10 @@ thead th {
 .monthChange button {
 	padding: 5px 10px; /* 버튼의 크기 조절 */
 	font-size: 16px; /* 버튼 글자 크기 */
+	background-color: #29b6f6; /* 파란색 버튼 */
+	color: white;
+	border: none;
+	border-radius: 5px;
 }
 
 .monthChange span {
@@ -243,21 +263,22 @@ thead th {
 
 #currentDateMonth {
 	margin-left: auto; /* 오른쪽으로 밀기 */
-	margin-right: 38px; /* 오른쪽 여백 추가 */
+	margin-right: 30px; /* 오른쪽 여백 추가 */
 }
 
 .psImage {
-    width: 50%; /* 이미지 영역은 50% */
-    height: 200px; /* 이미지 높이 */
-    background-color: #ccc; /* 이미지 배경색 */
+    width: 70%; /* 이미지 영역을 70%로 설정 */
+    height: 300px; /* 이미지 높이 */
     margin-right: 20px; /* 텍스트와 간격 */
-    overflow: hidden; /* 이미지 영역을 벗어나는 부분 숨기기 */
+    display: flex; /* 이미지가 컨테이너에 맞게 배치될 수 있도록 설정 */
+    justify-content: center; /* 이미지가 가운데 정렬되도록 설정 */
+    align-items: center; /* 이미지가 수직 중앙 정렬되도록 설정 */
 }
 
 .psImage img {
-    width: 100%; /* div에 맞게 이미지 크기 조정 */
-    height: 100%;
-    object-fit: cover; /* 이미지 비율 유지하면서 영역에 맞게 채우기 */
+    width: 100%; /* 컨테이너 너비에 맞게 이미지 크기 조정 */
+    height: 100%; /* 컨테이너 높이에 맞게 이미지 크기 조정 */
+    object-fit: cover; /* 이미지 비율을 유지하면서 영역을 채우도록 설정 */
 }
 
 .popUpItem span {
@@ -285,17 +306,18 @@ thead th {
 }
 
 .close:hover, .close:focus {
-	color: black;
+	color: white;
 	text-decoration: none;
 	cursor: pointer;
 }
 
 .checkbox-disabled {
-	pointer-events: none;
-	opacity: 0.5; /* 비활성화된 느낌을 위해 투명도를 낮춤 */
-	background-color: #d3d3d3; /* 회색 배경 */
-	border-color: #b0b0b0; /* 회색 테두리 */
+    pointer-events: none; /* 클릭할 수 없게 만듬 */
+    opacity: 0.5; /* 비활성화된 느낌을 위해 투명도를 낮춤 */
+    background-color: #d3d3d3; /* 비활성화된 배경색 */
+    border-color: #b0b0b0; /* 회색 테두리 */
 }
+
 
 .modal {
 	display: none;
@@ -326,7 +348,7 @@ thead th {
 
 .modal-content button {
 	padding: 10px 20px;
-	background-color: #e50914;
+	background-color: #ff66b2; /* 핑크색 버튼 */
 	color: white;
 	border: none;
 	cursor: pointer;
@@ -336,19 +358,7 @@ thead th {
 }
 
 .modal-content button:hover {
-	background-color: #c3070a;
-}
-
-.close {
-	color: #aaa;
-	float: right;
-	font-size: 28px;
-	font-weight: bold;
-	cursor: pointer;
-}
-
-.close:hover, .close:focus {
-	color: #fff;
+	background-color: #ff3399; /* 버튼 호버 시 색상 변경 */
 }
 </style>
 </head>

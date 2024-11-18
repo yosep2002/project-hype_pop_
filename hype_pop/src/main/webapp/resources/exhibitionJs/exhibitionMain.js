@@ -61,14 +61,14 @@
 
 	    // 현재 배너와 버튼을 초기화
 	    banners[currentBanner].style.display = 'none';
-	    document.querySelectorAll('.banner-btn')[currentBanner].style.backgroundColor = 'blue';
+	    document.querySelectorAll('.banner-btn')[currentBanner].style.backgroundColor = 'skyblue';
 
 	    // 다음 배너 설정
 	    currentBanner = (currentBanner + 1) % banners.length;
 
 	    // 새 배너와 버튼 스타일 적용
 	    banners[currentBanner].style.display = 'block';
-	    document.querySelectorAll('.banner-btn')[currentBanner].style.backgroundColor = 'red';
+	    document.querySelectorAll('.banner-btn')[currentBanner].style.backgroundColor = 'pink';
 }
 
 function showBannerByIndex(index) {
@@ -76,11 +76,11 @@ function showBannerByIndex(index) {
 
 	    // 모든 배너와 버튼을 초기화
 	    banners.forEach(banner => (banner.style.display = 'none'));
-	    document.querySelectorAll('.banner-btn').forEach(button => (button.style.backgroundColor = 'blue'));
+	    document.querySelectorAll('.banner-btn').forEach(button => (button.style.backgroundColor = 'skyblue'));
 
 	    // 선택된 배너와 버튼 스타일 적용
 	    banners[index].style.display = 'block';
-	    document.querySelectorAll('.banner-btn')[index].style.backgroundColor = 'red';
+	    document.querySelectorAll('.banner-btn')[index].style.backgroundColor = 'pink';
 	    currentBanner = index;  // 현재 배너 인덱스 업데이트
 	}
 

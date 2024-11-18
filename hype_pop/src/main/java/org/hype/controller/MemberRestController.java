@@ -1,5 +1,6 @@
 package org.hype.controller;
 
+import java.io.File;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URLDecoder;
@@ -224,6 +225,16 @@ public class MemberRestController {
       }
    }
 
+   @DeleteMapping(value = "/removeExh/{exhNo}", produces = MediaType.TEXT_PLAIN_VALUE)
+   public ResponseEntity<String> removeExh(@PathVariable("exhNo") int exhNo, @RequestParam(value = "userNo") int userNo) {
+      int deleted = memberService.eLikeListDelete(userNo,exhNo);
+
+      if (deleted > 0) { // deleted가 0보다 크면 성공
+         return ResponseEntity.ok("ok");
+      } else {
+         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("fail"); // 삭제할 데이터가 없는 경우
+      }
+   }
    
    //로그인 아이디 찾기 이메일 일치 여부
    @PostMapping("/checkEmail")
@@ -286,7 +297,7 @@ public class MemberRestController {
       }
    }
    
-   //로그인
+   //로그인(userNo 스토리지 저장)
 //   @PostMapping(value = "/login", produces = MediaType.APPLICATION_JSON_VALUE)
 //   @ResponseBody
 //   public ResponseEntity<Map<String, Object>> login(@RequestBody signInVO svo) {
@@ -303,30 +314,74 @@ public class MemberRestController {
 //           return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
 //       }
 //   }
+
    
-   //마이페이지 좋아요한 팝업스토어 이미지 가져오기
-    @GetMapping("/images/{fileName:.+}")
+   	//좋아요한 굿즈 이미지 가져오기
+    @GetMapping("/goodsBannerImages/{fileName:.+}")
     @ResponseBody
-    public ResponseEntity<Resource> serveImage(@PathVariable String fileName) throws MalformedURLException {
-       log.info(fileName);
-       
-       
-   
-       String imagePath = "\\\\192.168.0.129\\storeGoodsImg\\" + fileName;
-      
-        Path path = Paths.get(imagePath);  // Convert the image path to a Path object
+    public ResponseEntity<Resource> serveBannerImage(@PathVariable String fileName) throws MalformedURLException {
+        String uploadFolder = "\\\\192.168.0.129\\storeGoodsImg\\굿즈 배너 사진";
+        String imagePath = uploadFolder + File.separator + fileName;
+        Path path = Paths.get(imagePath);
         
         if (!Files.exists(path)) {
-            throw new RuntimeException("파일이 없어여: " + fileName);  // Handle case when file does not exist
+            throw new RuntimeException("파일이 없어여: " + fileName);
         }
+        
         if (!Files.isReadable(path)) {
-            throw new RuntimeException("파일을 읽을 수 없어요: " + fileName);  // Handle case when file is not readable
+            throw new RuntimeException("파일을 읽을 수 없어요: " + fileName);
         }
+        
         Resource file = new FileSystemResource(path.toFile());
         return ResponseEntity.ok()
             .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + fileName + "\"")
             .body(file);
     }
-   
+    
+    //좋아요 한 팝업스토어 이미지 가져오기
 
+    @GetMapping("/popupImages/{fileName:.+}")
+    @ResponseBody
+    public ResponseEntity<Resource> servePopupImage(@PathVariable String fileName) throws MalformedURLException {
+        String uploadFolder = "\\\\192.168.0.129\\storeGoodsImg\\팝업스토어 사진";
+        String imagePath = uploadFolder + File.separator + fileName;
+        Path path = Paths.get(imagePath);
+        
+        if (!Files.exists(path)) {
+            throw new RuntimeException("파일이 없어여: " + fileName);
+        }
+        
+        if (!Files.isReadable(path)) {
+            throw new RuntimeException("파일을 읽을 수 없어요: " + fileName);
+        }
+        
+        Resource file = new FileSystemResource(path.toFile());
+        return ResponseEntity.ok()
+            .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + fileName + "\"")
+            .body(file);
+    }
+    
+    
+    //좋아요 한 전시회 이미지 가져오기
+
+    @GetMapping("/exhImges/{fileName:.+}")
+    @ResponseBody
+    public ResponseEntity<Resource> serveExhImage(@PathVariable String fileName) throws MalformedURLException {
+        String uploadFolder = "\\\\192.168.0.129\\storeGoodsImg\\전시회 배너 사진";
+        String imagePath = uploadFolder + File.separator + fileName;
+        Path path = Paths.get(imagePath);
+        
+        if (!Files.exists(path)) {
+            throw new RuntimeException("파일이 없어여: " + fileName);
+        }
+        
+        if (!Files.isReadable(path)) {
+            throw new RuntimeException("파일을 읽을 수 없어요: " + fileName);
+        }
+        
+        Resource file = new FileSystemResource(path.toFile());
+        return ResponseEntity.ok()
+            .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + fileName + "\"")
+            .body(file);
+    }
 }

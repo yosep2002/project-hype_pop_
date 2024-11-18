@@ -1,10 +1,22 @@
 // 페이지 로드 시 알림 목록 숨기기
 document.addEventListener('DOMContentLoaded', () => {
+   const userNoElement = document.getElementById("userNo");
+   const userIdElement = document.getElementById("userId");
+   const userNo = userNoElement ? userNoElement.value : null;
+   const userId = userIdElement ? userIdElement.value : null;
+   
+   document.getElementById("goodsLogo").addEventListener('click', function() {
+       if (userNo) {
+           location.href = `/goodsStore/goodsMain?userNo=${userNo}`;
+       } else {
+           location.href = "/goodsStore/goodsMain";
+       }
+   });
+   
     const notificationList = document.getElementById('notificationList');
     notificationList.style.display = 'none'; // 알림 목록 숨김
     
     // 웹소켓 연결 시 알림 체크
-    const userNo = 5; // 실제 사용자 ID로 변경
     socket.send(JSON.stringify({ action: 'checkNotifications', userNo: userNo })); // 초기 알림 체크 요청
 });
 
@@ -14,7 +26,7 @@ const socket = new SockJS('http://localhost:9010/alarm');
 socket.onopen = function(event) {
     console.log('WebSocket 연결이 성공적으로 이루어졌습니다.');
 
-    const userNo = 5; // 실제 사용자 ID로 변경
+    const userNo = 1; // 실제 사용자 ID로 변경
     socket.send(JSON.stringify({ action: 'checkNotifications', userNo: userNo }));
 };
 
@@ -95,7 +107,7 @@ function updateNotificationUI(notifications) {
                 message = `${notification.title} ${notification.noticeTitle}<br>전송날짜: ${formattedDate}`;
                 break;
             case 'qNo':
-                message = `${notification.title} ${notification.qnaTitle}<br>전송날짜: ${formattedDate}`;
+                message = `${notification.title} ${notification.qnaTitle}${notification.message}<br>전송날짜: ${formattedDate}`;
                 break;
             default:
                 message = `${notification.title}<br>전송날짜: ${formattedDate}`;
@@ -165,7 +177,7 @@ function handleAlarmClick() {
 
     // 알림창을 열었을 때만 읽지 않은 알림을 읽음으로 표시
     if (alarmContent.style.display === 'block') {
-        const userNo = 5; // 실제 사용자 ID로 변경
+        const userNo = 1; // 실제 사용자 ID로 변경
         
         // 서버에 읽음 상태 업데이트 요청 전송
         socket.send(JSON.stringify({ action: 'markNotificationsAsRead', userNo: userNo }));
@@ -207,3 +219,4 @@ document.getElementById("searchBTN").addEventListener('click', () => {
         alert("검색어를 입력하세요.");
     }
 });
+

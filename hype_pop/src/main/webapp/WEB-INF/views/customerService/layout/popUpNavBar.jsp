@@ -1,5 +1,4 @@
-<%@ page language="java" contentType="text/html; charset=EUC-KR"
-    pageEncoding="EUC-KR"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html>
 <head>
@@ -33,22 +32,22 @@
 <body>
 
     <div class="navBar">
-        <a href="/hypePop/search/noData">ÆË¾÷ ½ºÅä¾î °Ë»ö</a>
-        <a href="/goodsStore/goodsSearch">±ÂÁî °Ë»ö</a>
-        <a href="/hypePop/popUpMain#MapAPI">³» ÁÖº¯</a>
-        <a href="/hypePop/calendar">Ä¶¸°´õ</a>
-        <a href="/member/login">·Î±×ÀÎ</a>
-        <a href="#" onclick="logout()" >·Î±×¾Æ¿ô</a>
-        <a href="/member/myPage?userNo=2">¸¶ÀÌÆäÀÌÁö</a>
+        <a href="/hypePop/search/noData">íŒì—… ìŠ¤í† ì–´ ê²€ìƒ‰</a>
+        <a href="/goodsStore/goodsSearch">êµ¿ì¦ˆ ê²€ìƒ‰</a>
+        <a href="/hypePop/popUpMain#MapAPI">ë‚´ ì£¼ë³€</a>
+        <a href="/hypePop/calendar">ìº˜ë¦°ë”</a>
+        <a href="/member/login">ë¡œê·¸ì¸</a>
+        <a href="#" onclick="logout()" >ë¡œê·¸ì•„ì›ƒ</a>
+        <a href="/member/myPage?userNo=2">ë§ˆì´íŽ˜ì´ì§€</a>
         
         
-    <!--     ÀÍ¸í »ç¿ëÀÚÀÇ °æ¿ì(·Î±×ÀÎÀ» ÇÏÁö ¾ÊÀº °æ¿ìµµ ÇØ´ç) 
+    <!--     ìµëª… ì‚¬ìš©ìžì˜ ê²½ìš°(ë¡œê·¸ì¸ì„ í•˜ì§€ ì•Šì€ ê²½ìš°ë„ í•´ë‹¹) 
       <sec:authorize access="isAnonymous()">
-         <a href="member/login">·Î±×ÀÎ</a>
+         <a href="member/login">ë¡œê·¸ì¸</a>
       </sec:authorize>
-      ÀÎÁõµÈ »ç¿ëÀÚ 
+      ì¸ì¦ëœ ì‚¬ìš©ìž 
       <sec:authorize access="isAuthenticated()">
-         <a href="member/myPage">¸¶ÀÌÆäÀÌÁö</a>
+         <a href="member/myPage">ë§ˆì´íŽ˜ì´ì§€</a>
       </sec:authorize> -->
         
         
@@ -60,13 +59,13 @@
 </body>
 <script type="text/javascript">
     function logout() {
-        // localStorage¿¡¼­ userNo »èÁ¦
+        // localStorageì—ì„œ userNo ì‚­ì œ
         localStorage.removeItem('userNo');
         
-        // Spring Security ·Î±×¾Æ¿ô URL·Î ¸®µð·º¼Ç (·Î±×¾Æ¿ô Ã³¸®)
+        // Spring Security ë¡œê·¸ì•„ì›ƒ URLë¡œ ë¦¬ë””ë ‰ì…˜ (ë¡œê·¸ì•„ì›ƒ ì²˜ë¦¬)
         window.location.href = '/logout';
         
-        // ÆäÀÌÁö ¸®·Îµå
+        // íŽ˜ì´ì§€ ë¦¬ë¡œë“œ
         location.reload();
     }
 </script>

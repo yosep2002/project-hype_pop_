@@ -183,7 +183,7 @@
             </div>
         </div>
     </div>
-
+   <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.5.1/sockjs.min.js"></script>
     <jsp:include page="layout/popUpFooter.jsp" />
     <jsp:include page="layout/popUpNavBar.jsp" />
     <script type="text/javascript" src="/resources/customerServiceJs/inquiryInfo.js"></script>

@@ -61,25 +61,5 @@ function updateMemberList() {
 
 // 취소 및 리스트로 돌아가기 버튼
 function backtoMList() {
-	window.location.href = "/admin/adminPage";  // 수정 완료 후 이동	
+	window.location.href = "/admin/adminPage"; 
 }
-
-//function hideMemInfo() {
-//    // 폼 숨기기
-//    const form = document.querySelector('#memberForm'); // 특정 ID로 폼 선택
-//    if (form) {
-//        form.style.display = 'none'; // 폼 숨기기
-//    }
-//
-//    // 버튼 숨기기
-//    const cancelButton = document.querySelector('#mCancel'); // 취소 버튼 선택
-//    const updateButton = document.querySelector('#mUpdate'); // 수정 완료 버튼 선택
-//
-//    if (cancelButton) {
-//        cancelButton.style.display = 'none'; // 취소 버튼 숨기기
-//    }
-//
-//    if (updateButton) {
-//        updateButton.style.display = 'none'; // 수정 완료 버튼 숨기기
-//    }
-//}

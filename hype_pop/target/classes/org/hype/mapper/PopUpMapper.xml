@@ -5,6 +5,21 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
 <mapper namespace="org.hype.mapper.PopUpMapper">
 
+<!-- 팝업스토어 번호로 이미지를 가져오는 쿼리 -->
+<select id="getImageByStoreId" parameterType="int" resultMap="pImgResultMap">
+    SELECT psNo, uuid, uploadPath, fileName
+    FROM pop_img_tbl
+    WHERE psNo = #{psNo}
+</select>
+
+
+<resultMap id="pImgResultMap" type="org.hype.domain.pImgVO">
+    <result property="psNo" column="psNo"/>
+    <result property="uuid" column="uuid"/>
+    <result property="uploadPath" column="uploadPath"/>
+    <result property="fileName" column="fileName"/>
+</resultMap>
+
 	<!-- 특정 유저의 관심사를 가져오는 쿼리 -->
 	<select id="getUserInterests" parameterType="java.lang.Integer"
 		resultType="java.lang.String">
@@ -29,23 +44,19 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     ]]>
 	</select>
 
-	<select id="getTopStoresByInterest"
-		parameterType="java.lang.String"
-		resultType="org.hype.domain.popStoreVO">
-		SELECT PSNAME, LIKECOUNT
-		FROM (
-		SELECT pop_main_tbl.PSNAME,
-		pop_main_tbl.LIKECOUNT,
-		ROW_NUMBER() OVER (ORDER BY
-		pop_main_tbl.LIKECOUNT DESC) AS rn
-		FROM pop_main_tbl
-		JOIN pop_cat_tbl ON
-		pop_main_tbl.PSNO = pop_cat_tbl.PSNO
-		WHERE pop_cat_tbl.${value} = 1
-		)
-		WHERE rn BETWEEN 1 AND 8
-	</select>
-
+<select id="getTopStoresByInterest"
+        parameterType="java.lang.String"
+        resultType="org.hype.domain.popStoreVO">
+    SELECT *
+    FROM (
+        SELECT pop_main_tbl.*, 
+               ROW_NUMBER() OVER (ORDER BY pop_main_tbl.LIKECOUNT DESC) AS rn
+        FROM pop_main_tbl
+        JOIN pop_cat_tbl ON pop_main_tbl.PSNO = pop_cat_tbl.PSNO
+        WHERE pop_cat_tbl.${value} = 1
+    )
+    WHERE rn BETWEEN 1 AND 8
+</select>
 
 
 
@@ -207,6 +218,74 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     GROUP BY PSNO
     ]]>
 </select>
+	
+	<!-- 관심사 가져오기 -->
+	<select id="getUserInterest" resultType="org.hype.domain.mCatVO">
+		select * from member_cat_tbl where userNo = #{userNo}
+	</select>
+
+	<!-- 좋아요 한 팝업스토어 가져오기 -->
+	<select id="getUserLike" resultType="org.hype.domain.likeVO">
+		select * from like_list_tbl where userNo = #{userNo}
+	</select>
+
+
+    <!-- 관심사별 좋아요 수가 많은 상위 3개 관심사 조회 -->
+    <select id="getTopInterestsByLikes" resultType="java.lang.String">
+        <![CDATA[
+            SELECT interest
+            FROM (
+                SELECT 
+                    CASE 
+                        WHEN pc.HEALTHBEAUTY = 1 THEN 'HEALTHBEAUTY'
+                        WHEN pc.GAME = 1 THEN 'GAME'
+                        WHEN pc.CULTURE = 1 THEN 'CULTURE'
+                        WHEN pc.SHOPPING = 1 THEN 'SHOPPING'
+                        WHEN pc.SUPPLY = 1 THEN 'SUPPLY'
+                        WHEN pc.KIDS = 1 THEN 'KIDS'
+                        WHEN pc.DESIGN = 1 THEN 'DESIGN'
+                        WHEN pc.FOODS = 1 THEN 'FOODS'
+                        WHEN pc.INTERIOR = 1 THEN 'INTERIOR'
+                        WHEN pc.POLICY = 1 THEN 'POLICY'
+                        WHEN pc.CHARACTER = 1 THEN 'CHARACTER'
+                        WHEN pc.EXPERIENCE = 1 THEN 'EXPERIENCE'
+                        WHEN pc.COLLABORATION = 1 THEN 'COLLABORATION'
+                        WHEN pc.ENTERTAINMENT = 1 THEN 'ENTERTAINMENT'
+                    END AS interest,
+                    COUNT(*) AS like_count
+                FROM like_list_tbl ll
+                JOIN pop_cat_tbl pc ON ll.PSNO = pc.PSNO
+                WHERE pc.HEALTHBEAUTY = 1 OR pc.GAME = 1 OR pc.CULTURE = 1 OR pc.SHOPPING = 1
+                      OR pc.SUPPLY = 1 OR pc.KIDS = 1 OR pc.DESIGN = 1 OR pc.FOODS = 1
+                      OR pc.INTERIOR = 1 OR pc.POLICY = 1 OR pc.CHARACTER = 1
+                      OR pc.EXPERIENCE = 1 OR pc.COLLABORATION = 1 OR pc.ENTERTAINMENT = 1
+                GROUP BY 
+                    CASE 
+                        WHEN pc.HEALTHBEAUTY = 1 THEN 'HEALTHBEAUTY'
+                        WHEN pc.GAME = 1 THEN 'GAME'
+                        WHEN pc.CULTURE = 1 THEN 'CULTURE'
+                        WHEN pc.SHOPPING = 1 THEN 'SHOPPING'
+                        WHEN pc.SUPPLY = 1 THEN 'SUPPLY'
+                        WHEN pc.KIDS = 1 THEN 'KIDS'
+                        WHEN pc.DESIGN = 1 THEN 'DESIGN'
+                        WHEN pc.FOODS = 1 THEN 'FOODS'
+                        WHEN pc.INTERIOR = 1 THEN 'INTERIOR'
+                        WHEN pc.POLICY = 1 THEN 'POLICY'
+                        WHEN pc.CHARACTER = 1 THEN 'CHARACTER'
+                        WHEN pc.EXPERIENCE = 1 THEN 'EXPERIENCE'
+                        WHEN pc.COLLABORATION = 1 THEN 'COLLABORATION'
+                        WHEN pc.ENTERTAINMENT = 1 THEN 'ENTERTAINMENT'
+                    END
+                ORDER BY like_count DESC
+            )
+            WHERE ROWNUM <= 3
+        ]]>
+    </select>
+<select id="getAvgRating" parameterType="int" resultType="double">
+    SELECT NVL(AVG(psScore), 0)
+    FROM pop_reply_tbl
+    WHERE psNo = #{psNo}
+</select>
 
 	<!-- 특정 팝업 스토어의 평균 별점을 계산하는 쿼리 -->
 	<select id="findRatingsByPsNo" parameterType="int"
@@ -216,6 +295,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		WHERE psNo =
 		#{psNo}
 	</select>
+	
+	
+<select id="checkUserLiked" resultType="int">
+    SELECT COUNT(*)
+    FROM like_list_tbl
+    WHERE userNo = #{userNo} AND psNo = #{psNo}
+</select>
+
 
 
 	<!-- 근처 스토어 찾기 -->
@@ -248,18 +335,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		select * from
 		pop_cat_tbl order by psno
 	</select>
-	
-	<!-- 관심사 가져오기 -->
-	<select id="getUserInterest" resultType="org.hype.domain.mCatVO">
-		select * from member_cat_tbl where userNo = #{userNo}
-	</select>
-
-	<!-- 좋아요 한 팝업스토어 가져오기 -->
-	<select id="getUserLike" resultType="org.hype.domain.likeVO">
-		select * from like_list_tbl where userNo = #{userNo}
-	</select>
-
-	<select id="getPopImg" resultType="org.hype.domain.pImgVO">
+<select id="getPopImg" resultType="org.hype.domain.pImgVO">
     <![CDATA[
         SELECT psNo, uuid, uploadpath AS uploadPath, filename AS fileName
         FROM (
@@ -272,6 +348,4 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         WHERE psNo = #{psNo}
     ]]>
 	</select>
-
-
 </mapper>

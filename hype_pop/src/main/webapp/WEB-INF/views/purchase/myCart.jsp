@@ -107,7 +107,6 @@
 
     <!-- 장바구니 목록을 감싸는 div -->
     <div class="cart-list">
-        <input type="hidden" value="2" name="userNo" id="userNo"> 
         <!-- 장바구니 목록 -->
         
    
@@ -138,10 +137,20 @@
    </div>
 
     <!-- 결제하기 버튼 -->
-    <div class="checkout-button">
+   <!--  <div class="checkout-button">
         <button  class="goPayInfo-button" onclick="goPayInfo()">결제하기</button>
-    </div>
-
+    </div> -->
+   
+   
+   <div class="checkout-button">
+    <form id="cartForm" method="get" action="getPayInfo">
+        <input type="hidden" name="grandTotal" id="hiddenGrandTotal" value="0">
+        <input type="hidden" name="cartData" id="hiddenCartData"> <!-- 장바구니 데이터 -->
+        <input type="hidden" value="2" name="userNo" id="userNo"> 
+        
+        <button type="button" class="goPayInfo-button" onclick="prepareCartData()">결제하기</button>
+    </form>
+   </div>
 
 
 <!-- Footer -->

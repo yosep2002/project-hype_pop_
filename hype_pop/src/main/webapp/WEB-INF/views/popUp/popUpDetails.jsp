@@ -3,44 +3,47 @@
 	<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %> <!-- fn 라이브러리 추가 -->
 	<script type="text/javascript" src="https://oapi.map.naver.com/openapi/v3/maps.js?ncpClientId=v3s0wu5ddz"></script>
 <!-- 팝업스토어 배너 및 좋아요 수 -->
-
+<!-- 팝업스토어 배너 및 좋아요 수 -->
 <div class="popUpbanner">
+    <div class="banner-container">
+        <!-- 배너 이미지를 삽입하는 img 태그 -->
+        <img id="popupBannerImage" >
+        <input type="hidden" class="fileData" value="<c:out value="${storeInfo.psImg.uuid}_${storeInfo.psImg.fileName}" />">
+        <div class="likeCount" id="likeCount_${storeInfo.psNo}">
+            <span id="totalLikeCount">❤️ ${storeInfo.likeCount}</span>
+        </div>
+    </div>
+</div>
+
+<!-- 팝업스토어 정보 -->
+<div class="popUpStoreInfo">
     <table>
         <tr>
-            <td>
-                <h1>
-                    <span id="bannerImg">팝업스토어 배너</span>
-                </h1>
+            <td id="popUpStoreInfo">
+                <span id="popUpName">${storeInfo.psName}</span>
+                <button id="likeCount">
+           <img id="likeIcon" src="/resources/images/emptyHeart.png" alt="Like" width="24">
+                 </button>
+                <h3 id="category">
+                    관심사: <span>${storeInfo.interest}</span>
+                </h3>
+                <h3 id="popUpStoreAdd">${storeInfo.psAddress}</h3>
             </td>
+        </tr>
+        <tr>
             <td>
-                <div id="likeCount_${storeInfo.psNo}">
-                    <span id="totalLikeCount">❤️ ${storeInfo.likeCount}</span>
-                </div>
+                <h3>${storeInfo.psExp}</h3>
             </td>
         </tr>
     </table>
 </div>
-	<!-- 팝업스토어 정보 -->
-	<table class="popUpStoreInfo">
-	    <tr>
-	        <td id="popUpStoreInfo">
-	            <span id="popUpName">${storeInfo.psName}</span>
-	            <span id="likeCount">좋아요</span>
-	            <h3 id="category">
-	                관심사: <span>${storeInfo.interest}</span>
-	            </h3>
-	            <h3 id="popUpStoreAdd">${storeInfo.psAddress}</h3>
-	        </td>
-	    </tr>
-	    <tr>
-	        <td>
-	            <h3>${storeInfo.psExp}</h3>
-	        </td>
-	    </tr>
-	</table>
-	
 	<!-- 팝업스토어 위치 지도 -->
-	<div id="map" style="width: 800px; height: 400px; margin: 0 auto; display: flex; justify-content: center;" ></div>
+	<div id="map" 
+	style="width: 800px; 
+	height: 400px; 
+	margin: 0 auto; 
+	display: flex; 
+	justify-content: center;" ></div>
 	
 	<!-- 기타 정보 -->
 	<div id="popUpETCInfo">
@@ -49,6 +52,12 @@
 	    <h3>주차 가능 여부: ${storeInfo.parkingInfo}</h3>
 	    <h3>팝업스토어 SNS 주소: ${storeInfo.snsAd}</h3>
 	</div>
+		<!-- 기타 정보 -->
+<!-- 평균 별점 섹션 -->
+<div id="popUpScoreAvg" style="font-size: 1.2em; color: #FFD700; background-color: white; border-radius: 15px; padding: 10px; text-align: center; display: inline-block; position: relative; left: -200px;">
+    <span>평균 별점: </span>
+    <span id="averageRating">${storeInfo.avgRating}</span>
+</div>
 	
 	<!-- 리뷰 작성 폼 -->
 	<form id="reviewForm"  style="display:none;">
@@ -71,7 +80,6 @@
 	
 	<!-- 내가 남긴 후기 -->
 	<div id="userReviewSection" style="display:none;">
-	    <h2>내가 남긴 후기</h2>
 	    <div id="reviewList">
 	        <!-- 동적으로 리뷰 목록 추가 -->
 	    </div>
@@ -99,8 +107,7 @@
     }'
     data-psNo='${storeInfo.psNo}'>
     </span> 
-
-		<input type="button" value="수정 취소" onclick="updateCancle()">
+	<input type="button" value="수정 취소" onclick="updateCancel()">
     <input type="button" value="수정 완료" onclick="update(this.form)">
 </form>
 <!-- 내가 남긴 후기 아래에 다른 사용자들의 후기를 볼 수 있는 섹션 추가 -->

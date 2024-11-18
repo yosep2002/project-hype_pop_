@@ -1,10 +1,10 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8"
-    pageEncoding="UTF-8"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ taglib uri="http://www.springframework.org/security/tags"   prefix="sec"%>
 <!DOCTYPE html>
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>페이지 제목</title>
+    <title>Insert title here</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -31,27 +31,22 @@
     </style>
 </head>
 <body>
-    <div class="navBar">
-        <a href="/hypePop/search/noData">팝업 스토어 검색</a>
-        <a href="/goodsStore/goodsSearch">굿즈 검색</a>
-        <a href="/hypePop/popUpMain#MapAPI">내 주변</a>
+
+       <div class="navBar">
+        <a href="/hypePop/search/noData">팝업스토어 전체 보기</a>
+        <a href="/goodsStore/goodsSearch" id="searchReset">굿즈 전체 보기</a>
+        <a href="/exhibition/exhibitionMain">전시회 메인 페이지</a>
         <a href="/hypePop/calendar">캘린더</a>
+        <a href="/party/partyBoard">파티구하기</a>
+        <sec:authorize access="!isAuthenticated()">
         <a href="/member/login">로그인</a>
-        <a href="#" onclick="logout()">로그아웃</a>
-        <a href="/member/myPage?userNo=2">마이페이지</a>
-    </div>
+        </sec:authorize>
+        <sec:authorize access="isAuthenticated()">
+        <a href="/logout">로그아웃</a>
+        <a href="/member/myPage?userNo=1">마이페이지</a>
+        </sec:authorize>
+    </div> 
+
 </body>
-<script type="text/javascript">
-    function logout() {
-        // localStorage에서 userNo 삭제
-        localStorage.removeItem('userNo');
-        
-        // Spring Security 로그아웃 URL로 리디렉션 (로그아웃 처리)
-        window.location.href = '/logout';
-        
-        // 페이지 리로드
-        location.reload();
-    }
-</script>
 
 </html>

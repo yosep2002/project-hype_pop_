@@ -8,6 +8,7 @@ const f = document.forms[0];
 let currentPageForPopUp = 1; // 팝업 스토어 현재 페이지
 let currentPageForGoods = 1; // 상품 현재 페이지
 let currentPageForMembers = 1; // 회원 현재 페이지
+let currentPageForExh = 1; // 전시회 현재 페이지
 const amount = 14;	  // 출력되는 개수
 let totalPagesForPopUp = 0; // 팝업 스토어 총 페이지 수
 let totalCountForPopUp = 0; // 팝업 스토어 총 아이템 수
@@ -15,9 +16,21 @@ let totalPagesForGoods = 0; // 상품 총 페이지 수
 let totalCountForGoods = 0; // 상품 총 아이템 수
 let totalPagesForMembers = 0; // 회원 총 페이지 수
 let totalCountForMembers = 0; // 회원 총 회원 수
+let totalPagesForExh = 0;  	  // 전시회 총 회원 수 
+let totalCountForExh = 0;  	  // 전시회 총 페이지 수 
 let isPopUpPage = true; // 팝업 페이지인지 여부
 let isMemberPage = false; // 회원 페이지인지 여부
 let isGoodsPage = false; // 굿즈 페이지인지 여부
+let isExhPage = false; // 전시회 페이지인지 여부
+
+// 등록하기 버튼 상태 설정 함수
+function updateRegisterBtnState(text, opacity, isDisabled, cursor) {
+    const registerBtn = document.getElementById('registerBtn');
+    registerBtn.textContent = text; // 버튼 텍스트 설정
+    registerBtn.style.opacity = opacity; // 불투명도 설정
+    registerBtn.disabled = isDisabled; // 버튼 비활성화/활성화 설정
+    registerBtn.style.cursor = cursor; // 커서 스타일 설정
+}
 
 // **** 관리자 Header 영역 (공통) ****
 // 탭 클릭 시 해당 기능 활성화
@@ -26,29 +39,44 @@ document.getElementById('popUpManage').addEventListener('click', function() {
     isPopUpPage = true;
     isMemberPage = false;
     isGoodsPage = false;
+    isExhPage = false;
     currentPageForPopUp = 1; // 초기화
     loadPopUpStores(currentPageForPopUp);   
     toggleSearchBox(true); // 검색 박스와 버튼 보이기
+    updateRegisterBtnState('팝업스토어 등록하기', '1', false, 'pointer');
 });
 document.getElementById('storeManage').addEventListener('click', function() {
     activeTab = 'store'; // 현재 활성화된 탭 업데이트
     isPopUpPage = false;
     isMemberPage = false;
     isGoodsPage = true;
+    isExhPage = false;
     currentPageForGoods = 1; // 초기화
     loadGoodsStores(currentPageForGoods);
     toggleSearchBox(true); // 검색 박스와 버튼 보이기
-//    document.getElementById('registerBtn').style.visibility = 'visible'; // 등록 버튼 보이기
+    updateRegisterBtnState('쇼핑몰 등록하기', '1', false, 'pointer');
+});
+document.getElementById('exhManage').addEventListener('click', function() {
+    activeTab = 'exh'; // 현재 활성화된 탭 업데이트
+    isPopUpPage = false;
+    isMemberPage = false;
+    isGoodsPage = false;
+    isExhPage = true;
+    currentPageForExh = 1;  // 초기화
+    loadExhibitions(currentPageForExh);
+    toggleSearchBox(true); // 검색 박스와 버튼 보이기
+    updateRegisterBtnState('전시회 등록하기', '1', false, 'pointer');
 });
 document.getElementById('memberManage').addEventListener('click', function() {
-    activeTab = 'member'; // 현재 활성화된 탭 업데이트
-    isPopUpPage = false;
-    isMemberPage = true;
-    isGoodsPage = false;
-    currentPageForMembers = 1;  // 초기화
-    loadMembersStores(currentPageForMembers);
-    toggleSearchBox(true); // 검색 박스와 버튼 보이기
-    document.getElementById('registerBtn').style.visibility = 'hidden'; // 등록 버튼 보이기
+	activeTab = 'member'; // 현재 활성화된 탭 업데이트
+	isPopUpPage = false;
+	isMemberPage = true;
+	isGoodsPage = false;
+	isExhPage = false;
+	currentPageForMembers = 1;  // 초기화
+	loadMembersStores(currentPageForMembers);
+	toggleSearchBox(true); // 검색 박스와 버튼 보이기
+	updateRegisterBtnState('등록하기', '0.5', true, 'not-allowed');
 });
 
 // 검색 박스와 버튼 보이기/숨기기 함수
@@ -73,14 +101,12 @@ toggleSearchBox(false);
 // 검색 버튼 클릭 이벤트 추가
 document.getElementById('searchBTN').addEventListener('click', function() {
     if (activeTab === 'popUp') {
-    	// 둘이 기능은 똑같아서 하나로 합쳐도 무방할 듯
-        //searchStores();
     	loadPopUpStores(currentPageForPopUp);
     } else if (activeTab === 'store') {
-//        searchGoods();
         loadGoodsStores(currentPageForGoods);
+    } else if (activeTab === 'exh') {
+    	loadExhibitions(currentPageForExh);
     } else if (activeTab === 'member') {
-//    	searchMembers();
     	loadMembersStores(currentPageForMembers);
     }
 });
@@ -105,12 +131,6 @@ function loadPopUpStores(page = 1) {
 	                totalPagesForPopUp = Math.ceil(totalCountForPopUp / amount); // 총 페이지 수 계산
 	                createPagination(totalPagesForPopUp, totalCountForPopUp); // 페이지네이션 생성
 
-	                // 에러 나서 임시로 막아둔 코드 
-//	                if (totalPagesForPopUp > 0) {
-//	                    createPagination(totalPagesForPopUp, totalCountForPopUp); // 페이지네이션 생성
-//	                } else {
-//	                    console.log('페이지 수가 0이므로 페이지네이션을 표시하지 않습니다.');
-//	                }
 	            } else {
 	                throw new Error('잘못된 데이터 구조입니다. 데이터: ' + JSON.stringify(data));
 	            }
@@ -150,13 +170,35 @@ function PopUpStoreLists(popUpStores) {
         popSList.appendChild(link);
     });
    
-    const form = document.querySelector('form');
-    if (form) {
-        form.style.display = 'none';
-    }
     
-//    hideMemInfo();  // 회원 정보 수정 폼 숨기기 
-   
+    // form 영역 숨기기
+    const elements = [
+        document.querySelector('form'),
+        document.querySelector('#beforeList'),
+        document.querySelector('#beforeImg1'),
+        document.querySelector('#beforeImg2'),
+        document.querySelector('#beforeImg'),
+        document.querySelector('#psCancel'),
+        document.querySelector('#psDelete'),
+        document.querySelector('#psUpdate'),
+        document.querySelector('#gCancel'),
+        document.querySelector('#gDelete'),
+        document.querySelector('#gUpdate'),
+        document.querySelector('#exhCancel'),
+        document.querySelector('#exhDelete'),
+        document.querySelector('#exhUpdate'),
+        document.querySelector('#mCancel'),
+        document.querySelector('#mUpdate'),
+        document.querySelector('#qnaListCat'),
+        document.querySelector('#storeList')
+    ];
+
+    elements.forEach(element => {
+        if (element) {
+            element.style.display = 'none';
+        }
+    });
+       
 }
 
 function createPagination(totalPages, totalCount) {
@@ -175,15 +217,21 @@ function createPagination(totalPages, totalCount) {
         return;
     }
 
-    const currentPage = isMemberPage ? currentPageForMembers :
-                       isGoodsPage ? currentPageForGoods : currentPageForPopUp;
+    const currentPage = isExhPage ? currentPageForExh : 
+        				(isMemberPage ? currentPageForMembers : 
+        				(isGoodsPage ? currentPageForGoods : currentPageForPopUp));
 
     // 이전 버튼
     const prevBtn = document.createElement('button');
     prevBtn.textContent = '<';
     prevBtn.disabled = currentPage === 1;
     prevBtn.addEventListener('click', () => {
-        if (isMemberPage) {
+    	if (isExhPage) {
+            if (currentPageForExh > 1) {
+                currentPageForExh--;
+                loadExhibitions(currentPageForExh);
+            }
+        } else if (isMemberPage) {
             if (currentPageForMembers > 1) {
                 currentPageForMembers--;
                 loadMembersStores(currentPageForMembers);
@@ -209,7 +257,10 @@ function createPagination(totalPages, totalCount) {
         pageLink.textContent = i;
         pageLink.addEventListener('click', (e) => {
             e.preventDefault();
-            if (isMemberPage) {
+            if (isExhPage) {
+                currentPageForExh = i;
+                loadExhibitions(currentPageForExh);
+            } else if (isMemberPage) {
                 currentPageForMembers = i;
                 loadMembersStores(currentPageForMembers);
             } else if (isGoodsPage) {
@@ -221,11 +272,12 @@ function createPagination(totalPages, totalCount) {
             }
         });
 
-        // 현재 페이지 강조
-        if ((isMemberPage && i === currentPageForMembers) ||
-            (isGoodsPage && i === currentPageForGoods) ||
-            (!isMemberPage && !isGoodsPage && i === currentPageForPopUp)) {
-                pageLink.style.fontWeight = 'bold';
+     // 현재 페이지 강조
+        if (isExhPage && i === currentPageForExh ||
+            isMemberPage && i === currentPageForMembers ||
+            isGoodsPage && i === currentPageForGoods ||
+            !isMemberPage && !isGoodsPage && !isExhPage && i === currentPageForPopUp) {
+            pageLink.style.fontWeight = 'bold';
         }
         paginationContainer.appendChild(pageLink);
     }
@@ -235,7 +287,12 @@ function createPagination(totalPages, totalCount) {
     nextBtn.textContent = '>';
     nextBtn.disabled = currentPage === totalPages;
     nextBtn.addEventListener('click', () => {
-        if (isMemberPage) {
+    	if (isExhPage) {
+            if (currentPageForExh < totalPages) {
+                currentPageForExh++;
+                loadExhibitions(currentPageForExh);
+            }
+        } else if (isMemberPage) {
             if (currentPageForMembers < totalPages) {
                 currentPageForMembers++;
                 loadMembersStores(currentPageForMembers);
@@ -275,19 +332,12 @@ function loadGoodsStores(page = 1, amount = 30) {
 
             	totalCountForGoods = data.total; // 전체 아이템 수 저장
                 totalPagesForGoods = Math.ceil(totalCountForGoods / amount); // 총 페이지 수 계산
-//                createPagination(totalPagesForGoods, totalCountForGoods, false); // 페이지네이션 생성
                
                 if (totalPagesForGoods > 0) {
                     createPagination(totalPagesForGoods, totalCountForGoods); // 페이지네이션 생성
                 } else {
                     console.log('페이지 수가 0이므로 페이지네이션을 표시하지 않습니다.');
                 }
-                // totalCount와 totalPages 계산
-//	                const totalCount = data.total;
-//	                const totalPages = Math.ceil(totalCount / amount); // 전체 페이지 수 계산
-
-//	                createPagination(totalPages, totalCount, false);
-//	                createPagination(totalPages, totalCount); // 페이지 생성 (원래코드)
             } else {
                 throw new Error('잘못된 데이터 구조입니다. 데이터: ' + JSON.stringify(data));
             }
@@ -319,7 +369,7 @@ function GoodsLists(goods) {
     goods.forEach(store => {	
     	// 굿즈(상품) 이름 클릭 시 링크로 이동
         const link = document.createElement('a');
-        link.href = `goodsUpdate?gNo=${store.gno}`;
+        link.href = `goodsUpdate?gno=${store.gno}`;
         link.style.color = 'black'; 
         link.style.textDecoration = 'none';
         link.style.display = 'block';
@@ -337,7 +387,131 @@ function GoodsLists(goods) {
         form.style.display = 'none';
     }
     
-//    hideMemInfo(); // 회원 정보 수정 폼 숨기기 
+    // form 영역 숨기기
+    const elements = [
+        document.querySelector('form'),
+        document.querySelector('#beforeList'),
+        document.querySelector('#beforeImg1'),
+        document.querySelector('#beforeImg2'),
+        document.querySelector('#beforeImg'),
+        document.querySelector('#psCancel'),
+        document.querySelector('#psDelete'),
+        document.querySelector('#psUpdate'),
+        document.querySelector('#gCancel'),
+        document.querySelector('#gDelete'),
+        document.querySelector('#gUpdate'),
+        document.querySelector('#exhCancel'),
+        document.querySelector('#exhDelete'),
+        document.querySelector('#exhUpdate'),
+        document.querySelector('#mCancel'),
+        document.querySelector('#mUpdate'),
+        document.querySelector('#qnaListCat'),
+        document.querySelector('#storeList')
+    ];
+
+    elements.forEach(element => {
+        if (element) {
+            element.style.display = 'none';
+        }
+    });
+}
+
+// 전시회 관리하기 버튼 활성화 
+function loadExhibitions(page = 1) {
+	currentPageForExh = page; // 현재 페이지 업데이트
+	 const searchEs = document.getElementById('adminSearchBox').value;
+	    fetch(`/admin/exhList?searchEs=${encodeURIComponent(searchEs)}&pageNum=${page}&amount=${amount}`)
+	        .then(response => {
+	            if (!response.ok) {
+	                throw new Error('리스트가 출력되지 않았습니다: ' + response.statusText);
+	            }
+	            return response.json();
+	        })
+	        .then(data => {
+	            if (data.list && data.total) {
+	            	
+	                ExhibitionLists(data.list);
+
+	                totalCountForExh = data.total; // 전체 아이템 수 저장
+	                totalPagesForExh = Math.ceil(totalPagesForExh / amount); // 총 페이지 수 계산
+	                createPagination(totalPagesForExh, totalCountForExh); // 페이지네이션 생성
+
+	            } else {
+	                throw new Error('잘못된 데이터 구조입니다. 데이터: ' + JSON.stringify(data));
+	            }
+	        })
+	        .catch(err => {
+	            console.error('오류:', err);
+	        });
+}
+
+// 전시회 관리하기 버튼 클릭 시 전시회 리스트 영역 출력
+function ExhibitionLists(exhibitions) {
+	const exhList = document.querySelector('#AllList');
+    const adminMain = document.querySelector('.adminMain');
+    
+    // 기존 목록 초기화
+    exhList.innerHTML = '';
+   
+    if (exhibitions.length === 0) {
+        adminMain.innerHTML = '<p>전시회가 없습니다.</p>';
+        return;
+    }
+   
+    exhibitions.forEach(store => {  
+        // 해당 팝업스토어 클릭 시 수정/삭제 페이지로 이동
+        const link = document.createElement('a');
+        link.href = `exhUpdateDelete?exhNo=${store.exhNo}`;
+        link.style.color = 'black'; 
+        link.style.textDecoration = 'none'; 
+        link.style.display = 'block';
+
+        // 새로운 <p> 요소 생성
+        const exhItem = document.createElement('p');
+        exhItem.appendChild(document.createTextNode(` ${store.exhNo} `));
+        exhItem.appendChild(document.createTextNode(store.exhName));
+        exhItem.appendChild(document.createTextNode(` ${new Date(store.exhStartDate).toLocaleDateString()} ~ ${new Date(store.exhEndDate).toLocaleDateString()}`));
+
+        // <p> 요소를 링크 안에 추가
+        link.appendChild(exhItem);
+
+        // 최종적으로 링크를 exhList에 추가
+        exhList.appendChild(link);
+    });
+   
+    const form = document.querySelector('form');
+    if (form) {
+        form.style.display = 'none';
+    }
+    
+    // form 영역 숨기기
+    const elements = [
+        document.querySelector('form'),
+        document.querySelector('#beforeList'),
+        document.querySelector('#beforeImg1'),
+        document.querySelector('#beforeImg2'),
+        document.querySelector('#beforeImg'),
+        document.querySelector('#psCancel'),
+        document.querySelector('#psDelete'),
+        document.querySelector('#psUpdate'),
+        document.querySelector('#gCancel'),
+        document.querySelector('#gDelete'),
+        document.querySelector('#gUpdate'),
+        document.querySelector('#exhCancel'),
+        document.querySelector('#exhDelete'),
+        document.querySelector('#exhUpdate'),
+        document.querySelector('#mCancel'),
+        document.querySelector('#mUpdate'),
+        document.querySelector('#qnaListCat'),
+        document.querySelector('#storeList')
+    ];
+
+    elements.forEach(element => {
+        if (element) {
+            element.style.display = 'none';
+        }
+    });
+   
 }
 
 //**** 회원 영역 ****
@@ -420,7 +594,33 @@ function MemberLists(members) {
         form.style.display = 'none';
     }
     
-//    hideMemInfo(); // 회원 정보 수정 폼 숨기기 
+    // form 영역 숨기기
+    const elements = [
+        document.querySelector('form'),
+        document.querySelector('#beforeList'),
+        document.querySelector('#beforeImg1'),
+        document.querySelector('#beforeImg2'),
+        document.querySelector('#beforeImg'),
+        document.querySelector('#psCancel'),
+        document.querySelector('#psDelete'),
+        document.querySelector('#psUpdate'),
+        document.querySelector('#gCancel'),
+        document.querySelector('#gDelete'),
+        document.querySelector('#gUpdate'),
+        document.querySelector('#exhCancel'),
+        document.querySelector('#exhDelete'),
+        document.querySelector('#exhUpdate'),
+        document.querySelector('#mCancel'),
+        document.querySelector('#mUpdate'),
+        document.querySelector('#qnaListCat'),
+        document.querySelector('#storeList')
+    ];
+
+    elements.forEach(element => {
+        if (element) {
+            element.style.display = 'none';
+        }
+    });
 }
 
 //**** footer 영역 ****
@@ -446,7 +646,7 @@ if(goodsState !== null){
 	}	
 }
 
-// 등록 버튼 클릭 시 페이지 이동 함수
+// 등록, 메인페이지 버튼 클릭 시 페이지 이동 함수
 function goToPage(url) {
 	window.location.href = url;
 }
@@ -459,31 +659,16 @@ if(registerBtn != null){
 			goToPage('/admin/popUpRegister'); // 팝업스토어 관리 탭에서 버튼 클릭 시 팝업 스토어 등록 페이지로 이동 (컨트롤러 경로)
 		} else if (activeTab === 'store') {
 			goToPage('/admin/goodsRegister'); // 쇼핑몰 관리 탭에서 버튼 클릭 시 상품(굿즈) 등록 페이지로 이동 (컨트롤러 경로)
-		}	
+		} else if(activeTab === 'exh') {
+			goToPage('/admin/exhRegister'); // 전시회 관리 탭에서 버튼 클릭 시 전시회 등록 페이지로 이동 (컨트롤러 경로)
+		}
 	});	
 }
 
-// 전시회 등록하기 버튼 클릭 시 이동
-const registerExBtn = document.querySelector('#registerExBtn');
-if (registerExBtn) {
-    registerExBtn.addEventListener('click', () => {
-        goToPage('/admin/exhRegister'); // 전시회 등록 페이지로 이동
-    });
+// 메인페이지 버튼 클릭 시 이동
+const backToMainPage = document.getElementById('backToMainPage');
+if(backToMainPage != null){
+	document.getElementById('backToMainPage').addEventListener('click', function() {
+			goToPage('/admin/adminPage'); // 전시회 관리 탭에서 버튼 클릭 시 전시회 등록 페이지로 이동 (컨트롤러 경로)
+	});	
 }
-
-// AdminController의 (/admin)에서만 등록하기 버튼 보이기
-document.addEventListener('DOMContentLoaded', () => {
-    const currentUrl = window.location.href;
-    const registerBtn = document.getElementById('registerBtn');
-
-    // registerBtn이 존재하는 경우에만 스타일을 변경
-    if (registerBtn) { 
-        if (currentUrl.includes('/admin/adminPage')) {
-            registerBtn.style.visibility = 'visible';
-        } else {
-            registerBtn.style.visibility = 'hidden';
-        }
-    } else {
-        console.log('registerBtn 요소가 DOM에 없습니다.');
-    }
-});

@@ -20,20 +20,20 @@ public class ExhibitionServiceImpl implements ExhibitionService {
 	public List<exhVO> getExhibitionsByPage(int page, int pageSize, String filter, String query) {
 	    int offset = (page - 1) * pageSize;
 
-	    // ì¿¼ë¦¬ ì¡°ê±´ì„ ê° í•„í„°ì™€ í•¨ê»˜ ì „ë‹¬
+	    // Äõ¸® Á¶°ÇÀ» °¢ ÇÊÅÍ¿Í ÇÔ²² Àü´Ş
 	    switch (filter) {
 	        case "latest":
-	            return exhibitionmapper.getLatestExhibitions(offset, pageSize, query);  // ìµœì‹  ì „ì‹œíšŒ ê¸°ì¤€ìœ¼ë¡œ ê°€ì ¸ì˜¤ëŠ” ì¿¼ë¦¬
+	            return exhibitionmapper.getLatestExhibitions(offset, pageSize, query);  // ÃÖ½Å Àü½ÃÈ¸ ±âÁØÀ¸·Î °¡Á®¿À´Â Äõ¸®
 	        case "dueSoon":
-	            return exhibitionmapper.getDueSoonExhibitions(offset, pageSize, query);  // ë§ˆê°ìˆœ
+	            return exhibitionmapper.getDueSoonExhibitions(offset, pageSize, query);  // ¸¶°¨¼ø
 	        case "lowerPrice":
-	            return exhibitionmapper.getExhibitionsOrderByPrice("ASC", offset, pageSize, query);  // ë‚®ì€ê°€ê²©ìˆœ
+	            return exhibitionmapper.getExhibitionsOrderByPrice("ASC", offset, pageSize, query);  // ³·Àº°¡°İ¼ø
 	        case "higherPrice":
-	            return exhibitionmapper.getExhibitionsOrderByPrice("DESC", offset, pageSize, query);  // ë†’ì€ê°€ê²©ìˆœ
+	            return exhibitionmapper.getExhibitionsOrderByPrice("DESC", offset, pageSize, query);  // ³ôÀº°¡°İ¼ø
 	        case "earlyBird":
-	            return exhibitionmapper.getEarlyBirdExhibitions(offset, pageSize, query);  // ì–¼ë¦¬ë²„ë“œ ì „ì‹œíšŒ
+	            return exhibitionmapper.getEarlyBirdExhibitions(offset, pageSize, query);  // ¾ó¸®¹öµå Àü½ÃÈ¸
 	        default:
-	            return exhibitionmapper.getExhibitionsByPage(offset, pageSize, query);  // ê¸°ë³¸ ì „ì‹œíšŒ ëª©ë¡
+	            return exhibitionmapper.getExhibitionsByPage(offset, pageSize, query);  // ±âº» Àü½ÃÈ¸ ¸ñ·Ï
 	    }
 	}
 
@@ -88,7 +88,7 @@ public class ExhibitionServiceImpl implements ExhibitionService {
 	@Override
 	public boolean isLiked(int exhNo, int userNo) {
 		Integer likeCount = exhibitionmapper.isLiked(exhNo, userNo);
-	    return (likeCount != null && likeCount > 0); // null ì²´í¬ì™€ ë¹„êµ
+	    return (likeCount != null && likeCount > 0); // null Ã¼Å©¿Í ºñ±³
 	}
 
 	@Override
@@ -104,7 +104,7 @@ public class ExhibitionServiceImpl implements ExhibitionService {
 	    return (rating != null) ? rating : 0.0;
 	}
 
-	// ëŒ“ê¸€ ì´ ê°œìˆ˜
+	// ´ñ±Û ÃÑ °³¼ö
 	@Override
 	public int getTotalReviewCount(int exhNo) {
 

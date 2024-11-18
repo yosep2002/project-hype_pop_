@@ -1,4 +1,49 @@
 document.addEventListener("DOMContentLoaded", function () {
+	function parseXMLToJSON(xml) {
+	    // XML을 JSON으로 변환하는 함수
+	    let obj = {};
+	    const parser = new DOMParser();
+	    const xmlDoc = parser.parseFromString(xml, "text/xml");
+
+	    // XML에서 <pImgVO> 태그의 하위 요소를 읽어 JSON 형식으로 변환
+	    const uuid = xmlDoc.getElementsByTagName("uuid")[0].textContent;
+	    const filename = xmlDoc.getElementsByTagName("fileName")[0].textContent;
+
+	    obj.uuid = uuid;
+	    obj.filename = filename;
+
+	    return obj;
+	}
+
+	function getImageData(psNo) {
+	    return new Promise((resolve, reject) => {
+	        fetch(`/hypePop/getImageData?psNo=${psNo}`)
+	            .then(response => {
+	                if (!response.ok) {
+	                    throw new Error('이미지 데이터를 가져오는 데 실패했습니다.');
+	                }
+	                return response.text(); // XML 형식으로 응답 받기
+	            })
+	            .then(xml => {
+	                try {
+	                    // XML을 JSON으로 변환
+	                    const imageData = parseXMLToJSON(xml);
+	                    
+	                    // 변환된 데이터 확인 후 반환
+	                    if (imageData && imageData.uuid && imageData.filename) {
+	                        resolve(imageData);  // 이미지 데이터를 반환
+	                    } else {
+	                        reject('유효하지 않은 이미지 데이터');
+	                    }
+	                } catch (error) {
+	                    reject('XML 파싱 오류: ' + error.message);
+	                }
+	            })
+	            .catch(error => {
+	                reject(error);
+	            });
+	    });
+	}
     const storeCards = document.querySelectorAll(".store-card");
     let popUpResults = [];
     let filteredPopUps = [];
@@ -10,6 +55,7 @@ document.addEventListener("DOMContentLoaded", function () {
         latitude: null,
         longitude: null
     };
+    
 
     if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition((position) => {
@@ -23,6 +69,7 @@ document.addEventListener("DOMContentLoaded", function () {
     } else {
         console.error("이 브라우저는 Geolocation을 지원하지 않습니다.");
     }
+    
 
     storeCards.forEach((card) => {
         const storeInfo = {
@@ -89,25 +136,53 @@ document.addEventListener("DOMContentLoaded", function () {
         displayedItems += initialStores.length;
         addLoadMoreButton(storeContainer, filteredStores);
     }
-
     function addLoadMoreButton(storeContainer, filteredStores) {
         let loadMoreBtn = document.querySelector(".load-more-btn");
-        if (!loadMoreBtn) {
-            loadMoreBtn = document.createElement("button");
-            loadMoreBtn.textContent = "더보기";
-            loadMoreBtn.classList.add("load-more-btn");
-            loadMoreBtn.onclick = function () {
-                loadMoreStores(filteredStores);
-            };
+
+        // 기존 더보기 버튼이 있으면 삭제
+        if (loadMoreBtn) {
+            loadMoreBtn.remove();
         }
 
+        // 새로운 더보기 버튼을 생성
+        loadMoreBtn = document.createElement("button");
+        loadMoreBtn.textContent = "더보기";
+        loadMoreBtn.classList.add("load-more-btn");
+
+        // 스타일 직접 설정 (CSS와 동일)
+        loadMoreBtn.style.backgroundColor = "#00aff0"; // 주요 색상
+        loadMoreBtn.style.color = "#ffffff"; // 흰색 텍스트
+        loadMoreBtn.style.border = "none";
+        loadMoreBtn.style.padding = "10px 20px";
+        loadMoreBtn.style.borderRadius = "5px"; // 버튼의 모서리를 둥글게
+        loadMoreBtn.style.cursor = "pointer";
+        loadMoreBtn.style.transition = "background-color 0.3s"; // 부드러운 색상 변화
+        loadMoreBtn.style.margin = "20px 0"; // 여백 추가
+        loadMoreBtn.style.display = "block"; // 블록 요소로 변경
+        loadMoreBtn.style.marginLeft = "auto"; // 왼쪽 여백 자동
+        loadMoreBtn.style.marginRight = "auto"; // 오른쪽 여백 자동
+
+        loadMoreBtn.onmouseover = function() {
+            loadMoreBtn.style.backgroundColor = "#0082b3"; // 호버 색상
+        };
+
+        loadMoreBtn.onmouseout = function() {
+            loadMoreBtn.style.backgroundColor = "#00aff0"; // 기본 색상
+        };
+
+        loadMoreBtn.onclick = function () {
+            loadMoreStores(filteredStores);
+        };
+
+        // 더보기 버튼을 추가하고, 조건에 맞으면 표시
         if (displayedItems < filteredStores.length) {
             storeContainer.appendChild(loadMoreBtn);
-            loadMoreBtn.style.display = "block";
+            loadMoreBtn.style.display = "block";  // 버튼 표시
         } else {
-            loadMoreBtn.style.display = "none";
+            loadMoreBtn.style.display = "none"; // 버튼 숨기기
         }
     }
+
 
     function loadMoreStores(filteredStores) {
         const storeContainer = document.querySelector(".searchResultStore");
@@ -130,7 +205,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
         storeCard.innerHTML = `
             <div class="store-image">
-                <img src="/resources/images/hamburger.png" alt="팝업스토어 배너 이미지">
+                <img src="/resources/images/hamburger.png" alt="팝업스토어 배너 이미지"> <!-- 기존 이미지 -->
             </div>
             <div class="store-info">
                 <div class="header">
@@ -151,7 +226,31 @@ document.addEventListener("DOMContentLoaded", function () {
                 </div>
             </div>
         `;
-        
+
+     // 이미지 동적으로 변경하는 코드
+        const imageElement = storeCard.querySelector(".store-image img");
+        if (imageElement) {
+            const psNo = store.psNo; // psNo를 사용하여 이미지 데이터를 가져오는 비동기 함수 호출
+
+            getImageData(psNo).then(imageData => {
+                const imageUuid = imageData.uuid;
+                const imageFilename = imageData.filename;
+
+                // uuid와 filename을 합쳐서 fileName 생성
+                const fileName = `${imageUuid}_${imageFilename}`;  // 합쳐서 fileName을 만듦
+
+                // 합쳐진 fileName을 사용하여 이미지 경로 설정
+                const imageUrl = `/hypePop/images/${fileName}`;  // 서버의 이미지 경로
+
+                imageElement.src = imageUrl;  // 동적으로 이미지 경로 설정
+            }).catch(error => {
+                console.error("이미지 데이터 로딩 실패:", error);
+                // 기본 이미지 표시 또는 사용자에게 오류 메시지 표시
+                imageElement.src = '/path/to/default-image.jpg';  // 기본 이미지 설정 (옵션)
+            });
+        } else {
+            console.error("이미지 엘리먼트가 존재하지 않습니다.");
+        }
         // 이름 클릭 시 상세 페이지로 이동하는 이벤트 추가
         const storeNameElement = storeCard.querySelector('.storeName');
         storeNameElement.addEventListener('click', (event) => {

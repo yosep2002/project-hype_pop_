@@ -37,7 +37,7 @@
         <a href="/hypePop/popUpMain#MapAPI">내 주변</a>
         <a href="/hypePop/calendar">캘린더</a>
         <a href="/member/login">로그인</a>
-        <a href="#" onclick="logout()" >로그아웃</a>
+        <a href="/logout" >로그아웃</a>
         <a href="/member/myPage?userNo=2">마이페이지</a>
         
         
@@ -61,7 +61,7 @@
     function logout() {
         // localStorage에서 userNo 삭제
         localStorage.removeItem('userNo');
-        
+
         // Spring Security 로그아웃 URL로 리디렉션 (로그아웃 처리)
         window.location.href = '/logout';
         

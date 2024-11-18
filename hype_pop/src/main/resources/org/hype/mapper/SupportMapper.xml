@@ -183,7 +183,11 @@
 		</if>
 	</select>
 
-
+<select id="getNoticeNo" parameterType="String" resultType="int">
+     SELECT
+    * FROM notice_tbl 
+    WHERE NOTICETITLE = #{title}
+   </select>
 
 
 </mapper>

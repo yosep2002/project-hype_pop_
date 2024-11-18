@@ -109,9 +109,9 @@ button:hover, #goBack:hover {
 					placeholder="제목을 입력하세요..." required> <select id="qnaType"
 					name="qnaType" required>
 					<option value="" disabled selected>유형 선택</option>
-					<option value="일반 문의">일반</option>
-					<option value="기술 지원">기술</option>
-					<option value="결제">결제</option>
+					<option value="일반 문의">일반 문의</option>
+					<option value="기술 지원">기술 지원</option>
+					<option value="결제">결제 관련</option>
 					<option value="기타">기타</option>
 				</select>
 			</div>

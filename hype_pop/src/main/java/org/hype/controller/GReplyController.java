@@ -77,7 +77,7 @@ public class GReplyController {
     public ResponseEntity<String> chkReplied(@PathVariable("userNo") int userNo, @PathVariable("gno") int gno){
     	log.warn("aaaaaaaaaaaa" + userNo + gno);
     	String result = gService.chkReplied(userNo, gno);
-    	log.warn("resultê°€ ì—¬ê¸° í‘œì‹œë¨ : " + result );
+    	log.warn("result°¡ ¿©±â Ç¥½ÃµÊ : " + result );
     	return new ResponseEntity<>(result, HttpStatus.OK);
     }
     
@@ -101,7 +101,7 @@ public class GReplyController {
         }
     }
     @GetMapping(value = "/getGreplyReviews", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody // JSONìœ¼ë¡œ ì‘ë‹µí•˜ê¸° ìœ„í•´ ì¶”ê°€
+    @ResponseBody // JSONÀ¸·Î ÀÀ´äÇÏ±â À§ÇØ Ãß°¡
     public ResponseEntity<Map<String, Object>> getGreplyReviews(@RequestParam int userNo) {
         Map<String, Object> response = new HashMap<>();
         try {

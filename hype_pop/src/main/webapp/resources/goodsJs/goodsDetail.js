@@ -1,6 +1,11 @@
 const rs = replyService;
 
 document.addEventListener("DOMContentLoaded", function () {
+	const userNoElement = document.getElementById("userNo");
+	const userIdElement = document.getElementById("userId");
+	const userNo = userNoElement ? userNoElement.value : null;
+	const userId = userIdElement ? userIdElement.value : null;
+	
     let currentPage = 1;
     const pageSize = 5;
     const goodsBanner = document.getElementById("goodsBanner");
@@ -14,7 +19,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
     showReplyList(currentPage);
     displayAvgStars();
+    if (userNo){
     chkReplied();
+    }
     
     function displayAvgStars() {
         const avgStarsContainer = document.getElementById('avgStarsContainer');
@@ -35,7 +42,7 @@ document.addEventListener("DOMContentLoaded", function () {
         .catch(err => console.error('Error:', err));
     }
 
-    function setBackgroundImage(item, path, fileName) {
+    function setBackgroundImage1(item, path, fileName) {
         fetch(`/${path}/${encodeURIComponent(fileName)}`)
             .then(response => response.blob())
             .then(blob => {
@@ -48,11 +55,30 @@ document.addEventListener("DOMContentLoaded", function () {
             .catch(error => console.error('Error:', error));
     }
 
-    // 사용 예
-    setBackgroundImage(goodsBanner, "goodsStore/goodsBannerImages", fileNameBanner);
-    setBackgroundImage(goodsDetailImg, "goodsStore/goodsDetailImages", fileNameDetail);
+    setBackgroundImage1(goodsBanner, "goodsStore/goodsBannerImages", fileNameBanner);
+    
+    function setBackgroundImage2(item, path, fileName) {
+        fetch(`/${path}/${encodeURIComponent(fileName)}`)
+            .then(response => response.blob())
+            .then(blob => {
+                const imageUrl = URL.createObjectURL(blob);
+                const img = new Image();
+                img.src = imageUrl;
+                
+                img.onload = function() {
+                    const aspectRatio = img.height / img.width;
+                    item.style.width = "100%"; // 고정 너비 설정 (예시로 전체 너비로 설정)
+                    item.style.backgroundImage = `url(${imageUrl})`;
+                    item.style.backgroundSize = "cover";
+                    item.style.backgroundPosition = "center center";
+                    item.style.backgroundRepeat = "no-repeat";
+                    item.style.height = `${item.offsetWidth * aspectRatio}px`; // 높이를 비율에 맞춰 설정
+                };
+            })
+            .catch(error => console.error('Error:', error));
+    }
+    setBackgroundImage2(goodsDetailImg, "goodsStore/goodsDetailImages", fileNameDetail);
 
-    // 수량 조절
     const decreaseBtn = document.getElementById('decreaseBtn');
     const increaseBtn = document.getElementById('increaseBtn');
     const quantityInput = document.getElementById('quantity');
@@ -113,7 +139,6 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
     function chkReplied() {
-        const userNo = 1;
         const gno = new URLSearchParams(location.search).get('gno');
         fetch(`/gReply/chkReplied/${userNo}/${gno}`)
             .then(response => response.text())
@@ -167,49 +192,48 @@ document.addEventListener("DOMContentLoaded", function () {
     
     document.getElementById('addReply').addEventListener('click', function (event) {
         event.preventDefault();
-        const rating = document.getElementById('rating').value;
-        const reviewText = document.getElementById('reviewText').value;
-        const gno = new URLSearchParams(location.search).get('gno');
-        const userId = "유저ID입니다.";
-        const userNo = 1;
-
-        rs.add({
-            gno: gno,
-            userNo: 1,
-            gcomment: reviewText,
-            gscore: rating,
-            userId: userId
-        }, function (result) {
-            if (result === "success") {
-                showReplyList(currentPage);
-                chkReplied();
-            } else {
-                alert("댓글 등록 실패");
-            }
-        })
+        if (userNo) {
+            const rating = document.getElementById('rating').value;
+            const reviewText = document.getElementById('reviewText').value;
+            const gno = new URLSearchParams(location.search).get('gno');
+            rs.add({
+                gno: gno,
+                userNo: userNo,
+                gcomment: reviewText,
+                gscore: rating,
+                userId: userId
+            }, function (result) {
+                if (result === "success") {
+                    showReplyList(currentPage);
+                    chkReplied();
+                } else {
+                    alert("댓글 등록 실패");
+                }
+            });
+        } else {
+            document.getElementById("loginModal").style.display = "block";
+        }
     });
 
     function showReplyList(page) {
         const gno = new URLSearchParams(location.search).get('gno');
-        const userNo = 1;
-
-        rs.getList(gno, userNo, currentPage, pageSize, function (data) {
+        const currentUserNo = userNo || 0; // userNo가 없을 경우 0 사용
+        
+        rs.getList(gno, currentUserNo, currentPage, pageSize, function (data) {
             const replyUlMine = document.querySelector(".myChat");
             const replyUlAll = document.querySelector(".allChat");
             replyUlMine.innerHTML = "";
             replyUlAll.innerHTML = "";
 
-            // 댓글 목록 초기화
             let myReplyMsg = '';
             let allReplyMsg = '';
 
-            // 내 댓글 추가
-            const myReply = data.myReply;
-            if (myReply) {
+            if (userNo && data.myReply) { // userNo가 있을 때만 myReply 사용
+                const myReply = data.myReply;
                 myReplyMsg += `<li dataRno=${myReply.greplyNo} class="myChat">`;
                 myReplyMsg += `<div class="chatHeader">`;
                 myReplyMsg += `<div class="userRating"></div>`;
-                myReplyMsg += `<strong class="primaryFont">내 댓글: ${myReply.userId}</strong>`;
+                myReplyMsg += `<strong class="primaryFont">내 댓글: ${userId}</strong><br/>`;
                 myReplyMsg += `<small class="pullRight">${displayTime(myReply.gupdateDate)}</small>`;
                 myReplyMsg += `<div class="kebabMenu">⋮</div>`;
                 myReplyMsg += `<div class="menuOptions" style="visibility: hidden;">`;
@@ -226,7 +250,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 allReplyMsg += `<li dataRno=${vo.greplyNo}>`;
                 allReplyMsg += `<div class="chatHeader">`;
                 allReplyMsg += `<div class="userRating"></div>`;
-                allReplyMsg += `<strong class="primaryFont">${vo.userId}</strong>`;
+                allReplyMsg += `<strong class="primaryFont">${vo.userId}</strong><br/>`;
                 allReplyMsg += `<small class="pullRight">${displayTime(vo.gupdateDate)}</small>`;
                 allReplyMsg += `<p>${vo.gcomment}</p>`;
                 allReplyMsg += `</li>`;
@@ -236,12 +260,13 @@ document.addEventListener("DOMContentLoaded", function () {
             replyUlAll.innerHTML = allReplyMsg;
 
             displayPagingButtons(data.totalReplies);
-            displayStarsForReplies(myReply, allReplies);
+            displayStarsForReplies(data.myReply, allReplies);
             bindEditDeleteEvents();
             bindKebabMenuEvents();
             displayAvgStars();
         });
     }
+
 
     function bindEditDeleteEvents() {
         // 수정 버튼 이벤트
@@ -319,7 +344,7 @@ document.addEventListener("DOMContentLoaded", function () {
                         },
                         body: JSON.stringify({
                             gno: new URLSearchParams(location.search).get('gno'),
-                            userNo: 1,
+                            userNo: userNo,
                             gcomment: newComment,
                             gscore : newGscore
                         }),
@@ -342,8 +367,6 @@ document.addEventListener("DOMContentLoaded", function () {
         document.querySelectorAll('.deleteBtn').forEach(deleteBtn => {
             deleteBtn.addEventListener('click', function () {
                 const gno = new URLSearchParams(location.search).get('gno');
-                const userNo = 1;
-
                 fetch(`/gReply/deleteReply/${gno}/${userNo}`, { method: 'DELETE' })
                     .then(response => response.json())
                     .then(result => {
@@ -421,8 +444,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
     function likeBtnChange() {
         const gno = new URLSearchParams(location.search).get('gno');
-        const userNo = 1;
-
         fetch(`/goodsStore/chkLike/${gno}/${userNo}`)
             .then(response => response.json())
             .then(result => {
@@ -433,9 +454,8 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     document.querySelector("#chkLike").addEventListener('click', () => {
+    	if(userNo){
         const gno = new URLSearchParams(location.search).get('gno');
-        const userNo = 1;
-
         fetch(`/goodsStore/changeLike/${gno}/${userNo}`)
             .then(response => response.json())
             .then(() => likeBtnChange())
@@ -443,13 +463,65 @@ document.addEventListener("DOMContentLoaded", function () {
             .then(response => response.json())
             .then(likeCount => {
                 document.querySelector("#goodsLike").textContent = `좋아요: ${likeCount}회`;
+                likeBtnChange();
             })
             .catch(err => console.error('Error:', err));
+    	}else{
+            document.getElementById("loginModal").style.display = "block";
+    	}
     });
-    likeBtnChange();
+    
+    if (userNo) {
+        likeBtnChange();
+    }
     
     document.getElementById("moveToStore").addEventListener('click', ()=>{
         const gno = new URLSearchParams(location.search).get('gno');
     	location.href=`/goodsStore/goodsToPopup?gno=${gno}`;
     })
+    
+    document.querySelector(".close").onclick = function() {
+        document.getElementById("loginModal").style.display = "none";
+    };
+
+    window.onclick = function(event) {
+        if (event.target == document.getElementById("loginModal")) {
+            document.getElementById("loginModal").style.display = "none";
+        }
+    };
+    
+    const scrollUpButton = document.getElementById("scrollUp");
+    const scrollDownButton = document.getElementById("scrollDown");
+
+    // 최상단으로 스크롤
+    function scrollToTop() {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // 최하단으로 스크롤
+    function scrollToBottom() {
+        window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+    }
+
+    // 스크롤 상태에 따라 버튼 보이기/숨기기 설정
+    function checkScrollPosition() {
+        if (window.scrollY === 0) {
+            scrollUpButton.disabled = true;
+            scrollDownButton.disabled = false;
+        } else if (window.innerHeight + window.scrollY >= document.body.offsetHeight) {
+            scrollUpButton.disabled = false;
+            scrollDownButton.disabled = true;
+        } else {
+            scrollUpButton.disabled = false;
+            scrollDownButton.disabled = false;
+        }
+    }
+
+    // 버튼에 클릭 이벤트 리스너 추가
+    scrollUpButton.addEventListener("click", scrollToTop);
+    scrollDownButton.addEventListener("click", scrollToBottom);
+
+    // 페이지 로드 및 스크롤 시 버튼 상태 업데이트
+    window.addEventListener("scroll", checkScrollPosition);
+    checkScrollPosition(); // 초기 로딩 시 상태 설정
 });

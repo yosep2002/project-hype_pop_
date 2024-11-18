@@ -9,6 +9,7 @@ import org.hype.domain.noticeVO;
 import org.hype.domain.qnaVO;
 import org.hype.service.NoticeService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -31,6 +32,10 @@ public class SupportController {
 	
 	@Autowired
 	private NoticeService noticeService;
+	
+	 @Autowired
+	 @Qualifier("alarmController")  // 어떤 빈을 사용할지 명시
+	 private AlarmController alarmController; 
 	
 	@GetMapping(value = "/notices", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
@@ -126,34 +131,37 @@ public class SupportController {
 		return "/customerService/createInquiry";
 	}
 	
-	@PostMapping("/createInquiry") // 공지 생성
-	public String createInquiry(@RequestParam String title, @RequestParam String qnaType, 
-	                            @RequestParam String content, /*HttpSession session,*/ Model model) {
-	    // 세션에서 userNo 가져오기
-//	    Integer userNo = (Integer) session.getAttribute("userNo");
-	    
-	    // qnaVO 객체 생성 및 필드 설정
-	    qnaVO qna = new qnaVO();
-	    qna.setQnaTitle(title);
-	    qna.setQnaType(qnaType);
-	    qna.setQnaContext(content);
-	    qna.setQnaAnswer("답변없음");
-	    qna.setUserNo(1);
-	    
-	    // userNo 설정
-//	    qna.setUserNo(userNo); // userNo를 qnaVO에 설정해야 하는 메서드 추가 필요
+	@PostMapping("/createInquiry") // 문의 작성
+    public String createInquiry(@RequestParam String title, @RequestParam String qnaType, 
+                                @RequestParam String content, /*HttpSession session,*/ Model model) {
+        // 사용자 번호 추출
+//        Integer userNo = (Integer) session.getAttribute("userNo");
+        
+        // qnaVO 객체 생성 후 값 설정
+        qnaVO qna = new qnaVO();
+        qna.setQnaTitle(title);
+        qna.setQnaType(qnaType);
+        qna.setQnaContext(content);
+        qna.setQnaAnswer("미답변");
+        qna.setUserNo(1);
+        
+        // userNo 설정
+//        qna.setUserNo(userNo); // userNo 값 설정
 
-	    // 문의 저장
-	    boolean isSaved = noticeService.createInquiry(qna); 
+        // 문의 저장
+        boolean isSaved = noticeService.createInquiry(qna); 
+        int noticeNo = noticeService.getNoticeNo(title);
+        
 
-	    if (isSaved) {
-	        model.addAttribute("message", "문의가 성공적으로 저장되었습니다.");
-	    } else {
-	        model.addAttribute("message", "문의 저장에 실패하였습니다.");
-	    }
+        if (isSaved) {
+            model.addAttribute("message", "문의가 성공적으로 작성되었습니다.");
+             alarmController.sendNoticeNotifications(noticeNo); // 알림 전송 메서드 호출
+        } else {
+            model.addAttribute("message", "문의 작성에 실패하였습니다.");
+        }
 
-	    return "redirect:/hypePop/customerMain?tab=inquiry"; // 문의사항 리스트로 리다이렉트
-	}
+        return "redirect:/hypePop/customerMain?tab=inquiry"; // 작성 후 페이지로 이동
+    }
 
 
 	@GetMapping("/noticeInfo") // 공지 상세 정보

@@ -1,10 +1,15 @@
 package org.hype.controller;
 
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.List;
 
+import javax.servlet.http.HttpSession;
+
+import org.apache.ibatis.annotations.Param;
 import org.hype.domain.gImgVO;
+import org.hype.domain.likedExhViewVO;
 import org.hype.domain.likedGoodsImgVO;
 import org.hype.domain.likedPopImgVO;
 
@@ -13,6 +18,8 @@ import org.hype.domain.pImgVO;
 import org.hype.domain.signInVO;
 import org.hype.service.MemberService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
@@ -27,6 +34,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.sun.jdi.connect.spi.Connection;
+
 import lombok.extern.log4j.Log4j;
 
 @Log4j
@@ -35,10 +44,17 @@ import lombok.extern.log4j.Log4j;
 public class MemberController {
 
 	@Autowired
-	private PasswordEncoder pwencoder;
-
-	@Autowired
 	private MemberService mservice;
+	
+    @Autowired
+    private PasswordEncoder pwencoder;
+	
+//	@Autowired
+//	private GoogleConnectionFactory googleConnectionFactory;
+//	@Autowired
+//	private OAuth2Parameters googleOAuth2Parameters;
+
+
 
 	// 로그인페이지로 이동
 	@GetMapping("/login")
@@ -47,20 +63,44 @@ public class MemberController {
 		return "member/login";
 	}
 
-//	// 로그인 처리
-//	@PostMapping("/login")
-//	public String login(signInVO svo, Model model) {
-//
-//		signInVO member = mservice.loginMember(svo);
-//
-//		if (member != null) {
-//			return "popUp/popUpMain";
-//		} else {
-//			model.addAttribute("error", "로그인을 오류입니다.");
-//			return "member/login";
-//		}
-//	}
+	// 로그인 처리
+	@PostMapping("/login")
+	public String login(signInVO svo, Model model) {
 
+		signInVO member = mservice.loginMember(svo);
+		
+		
+		if (member != null) {
+			return "popUp/popUpMain";
+		} else {
+			model.addAttribute("error", "로그인을 오류입니다.");
+			return "member/login";
+		}
+	}
+
+	// 로그인 첫 화면 요청 메소드
+//	@RequestMapping(value = "/login", method = { RequestMethod.GET, RequestMethod.POST })
+//	public String login(Model model, HttpSession session) {
+//
+//		/* 구글code 발행 */
+//		OAuth2Operations oauthOperations = googleConnectionFactory.getOAuthOperations();
+//		String url = oauthOperations.buildAuthorizeUrl(GrantType.AUTHORIZATION_CODE, googleOAuth2Parameters);
+//
+//		System.out.println("구글:" + url);
+//
+//		model.addAttribute("google_url", url);
+//
+//		/* 생성한 인증 URL을 View로 전달 */
+//		return "login";
+//	}
+//	
+//	@RequestMapping("/googleLogin")
+//	public String googleLogin() {
+//	    OAuth2Operations oauthOperations = googleConnectionFactory.getOAuthOperations();
+//	    String url = oauthOperations.buildAuthorizeUrl(GrantType.AUTHORIZATION_CODE, googleOAuth2Parameters);
+//	    return "redirect:" + url;
+//	}
+	
 	// 회원가입
 	@GetMapping("/join")
 	public String joinPage() {
@@ -103,17 +143,18 @@ public class MemberController {
 		// 회원 가입
 		mservice.joinMember(svo);
 
-		return "member/login";
+		return "member/joinSuccess";
 
 	}
 
-	// 마이페이지
+
 	@GetMapping("/myPage")
 	public String myPage(Model model, @RequestParam("userNo") int userNo) {
 		signInVO userInfo = mservice.selectMyPageInfo(userNo);
 		mCatVO userInterests = mservice.selectMyInterest(userNo);
 		List<likedPopImgVO> pLikeList = mservice.pLikeList(userNo);
 		List<likedGoodsImgVO> gLikeList = mservice.gLikeList(userNo);
+		List<likedExhViewVO> eLikeList = mservice.eLikeList(userNo);
 		System.out.println("gLikeList :" + gLikeList);
 
 		// 회원 정보
@@ -124,6 +165,8 @@ public class MemberController {
 		model.addAttribute("pLikeList", pLikeList);
 		// 좋아요 한 굿즈 스토어
 		model.addAttribute("gLikeList", gLikeList);
+		// 좋아요 한 전시회
+		model.addAttribute("eLikeList", eLikeList);
 
 		for (likedGoodsImgVO goods : gLikeList) {
 			System.out.println("gName: " + goods.getGname());
@@ -136,7 +179,7 @@ public class MemberController {
 	}
 
 	// 비밀번호 변경
-	@GetMapping("/passwordChange")
+	@PostMapping("/passwordChange")
 	public String passwordChange(@RequestParam(value = "userNo") int userNo, @RequestParam("oldPw") String oldPw,
 			@RequestParam("newPw") String newPw) {
 		log.info("비밀번호 변경: userNo=" + userNo);
@@ -210,131 +253,57 @@ public class MemberController {
 		return "/purchase/paymentList";
 
 	}
+	
+	
+	//비밀번호 찾기 후 비밀번호 변경으로 이동
+	@GetMapping("goPwChange")
+	public String goPwChange() {
+		return "/member/searchPw";
+	}
+	
+	// 비밀번호 변경
+	@PostMapping("/pwChange")
+	public String pwChange(@RequestParam(value = "userNo") int userNo, 
+	                       @RequestParam("oldPw") String oldPw,
+	                       @RequestParam("newPw") String newPw, 
+	                       Model model) {
+	    log.info("비밀번호 변경: userNo=" + userNo);
 
-	/*---------------------------------------------------------------------------*/
-
-	// 鍮꾨 踰덊샇 蹂 寃 泥섎━
-	// 떎 젣 DB 뿰 룞怨 鍮꾨 踰덊샇 쑀 슚 꽦 寃 궗 뒗 꽌鍮꾩뒪 뿉 꽌 泥섎━ 븯寃 맗 땲 떎!
-	// POST 슂泥 쑝濡 궗 슜 옄 쓽 깉濡쒖슫 鍮꾨 踰덊샇瑜 諛쏆븘 泥섎━ 븯寃 맗 땲 떎!
-	@PostMapping("/updatePassword")
-	public String updatePassword(@RequestParam("userId") String userId,
-			@RequestParam("currentPassword") String currentPassword, @RequestParam("newPassword") String newPassword,
-			Model model) {
-		// 二쇱꽍: 쁽 옱 鍮꾨 踰덊샇媛 留욌뒗吏 솗 씤 븯 뒗 濡쒖쭅 씠 븘 슂
-		// boolean isCurrentPasswordValid = memberService.checkPassword(userId,
-		// currentPassword);
-
-		// 二쇱꽍: 깉 鍮꾨 踰덊샇濡 뾽 뜲 씠 듃 븯 뒗 濡쒖쭅 씠 븘 슂
-		// if (isCurrentPasswordValid) {
-		// memberService.updatePassword(userId, newPassword);
-		// model.addAttribute("message", "鍮꾨 踰덊샇媛 꽦怨듭쟻 쑝濡 蹂 寃쎈릺 뿀 뒿 땲 떎.");
-		// return "/member/updateSuccess"; // 꽦怨 떆 寃곌낵 럹 씠吏 濡 씠 룞 븯寃 맗 땲 떎!
-		// } else {
-		// model.addAttribute("error", " 쁽 옱 鍮꾨 踰덊샇媛 삱諛붾Ⅴ吏 븡 뒿 땲 떎.");
-		return "/member/changePassword"; // 떎 뙣 떆 떎 떆 鍮꾨 踰덊샇 蹂 寃 럹 씠吏 濡 씠 룞 븯寃 맗 땲 떎!
-		// }
+	    if (mservice.selectOldPw(userNo, oldPw) > 0) {
+	        mservice.updateNewPw(oldPw, newPw, userNo);
+	        model.addAttribute("msg", "비밀번호가 변경되었습니다.");
+	        return "member/login"; // 로그인 페이지로 이동
+	    }
+	    
+	    // 실패 시 메시지 추가
+	    model.addAttribute("msg", "비밀번호 변경에 실패했습니다.");
+	    return "member/searchPw"; // 비밀번호 찾기 페이지로 이동
 	}
 
-	// 쟾 솕踰덊샇 蹂 寃 泥섎━
-	// POST 슂泥 쑝濡 궗 슜 옄 쓽 깉濡쒖슫 쟾 솕踰덊샇瑜 諛쏆븘 泥섎━
-	@PostMapping("/updatePhone")
-	public String updatePhone(@RequestParam("userId") String userId, @RequestParam("newPhone") String newPhone,
-			Model model) {
-		// 二쇱꽍: 쟾 솕踰덊샇瑜 뾽 뜲 씠 듃 븯 뒗 濡쒖쭅 씠 븘 슂
-		// memberService.updatePhone(userId, newPhone);
-		// model.addAttribute("message", " 쟾 솕踰덊샇媛 꽦怨듭쟻 쑝濡 蹂 寃쎈릺 뿀 뒿 땲 떎.");
-		return "/member/updateSuccess"; // 꽦怨 떆 寃곌낵 럹 씠吏 濡 씠 룞
+	//아이디 찾기 후 아이디 보여주는 화면 이동
+	@GetMapping("/checkMyId")
+	public String checkMyId(@RequestParam("userName") String userName, 
+	                        @RequestParam("userEmail") String userEmail, 
+	                        Model model) {
+	    log.info("Searching for userName: " + userName + " and userEmail: " + userEmail);
+
+	    // 서비스에서 userName과 userEmail로 아이디를 조회
+	    String userId = mservice.checkMyId(userName, userEmail);
+
+	    // userId를 모델에 담아 JSP로 전달
+	    model.addAttribute("userId", userId);
+
+	    // 결과를 보여줄 JSP로 이동
+	    return "member/searchId";
 	}
+	
+	
 
-	// 씠硫붿씪 蹂 寃 泥섎━
-	// POST 슂泥 쑝濡 궗 슜 옄 쓽 깉濡쒖슫 씠硫붿씪 쓣 諛쏆븘 泥섎━
-	@PostMapping("/updateEmail")
-	public String updateEmail(@RequestParam("userId") String userId, @RequestParam("newEmail") String newEmail,
-			Model model) {
-		// 二쇱꽍: 씠硫붿씪 쓣 뾽 뜲 씠 듃 븯 뒗 濡쒖쭅 씠 븘 슂
-		// memberService.updateEmail(userId, newEmail);
-		// model.addAttribute("message", " 씠硫붿씪 씠 꽦怨듭쟻 쑝濡 蹂 寃쎈릺 뿀 뒿 땲 떎.");
-		return "/member/updateSuccess"; // 꽦怨 떆 寃곌낵 럹 씠吏 濡 씠 룞 븯寃 맗 땲 떎!
-	}
+	
 
-	// 醫뗭븘 슂 븳 뙘 뾽 뒪 넗 뼱 紐⑸줉 쓣 썙二쇰뒗 硫붿꽌 뱶
-	@GetMapping("/likedPopUpStores")
-	public String getLikedPopUpStores(@RequestParam("userId") String userId, Model model) {
-		log.info("醫뗭븘 슂 븳  뙘 뾽 뒪 넗 뼱 紐⑸줉 議고쉶: " + userId);
 
-		// List<PopUpStore> likedStores = memberService.getLikedPopUpStores(userId);
-		// model.addAttribute("likedStores", likedStores);
-
-		return "/member/likedPopUpStores"; // 醫뗭븘 슂 븳 뙘 뾽 뒪 넗 뼱 紐⑸줉 JSP
-	}
-
-	// 紐⑸줉 뿉 꽌 궘 젣 븯 뒗 硫붿꽌 뱶
-	@PostMapping("/removeLikedPopUpStore")
-	public String removeLikedPopUpStore(@RequestParam("userId") String userId, @RequestParam("storeId") Long storeId,
-			Model model) {
-		log.info("醫뗭븘 슂 븳  뙘 뾽 뒪 넗 뼱  궘 젣: " + storeId + " by " + userId);
-
-		// boolean isRemoved = memberService.removeLikedPopUpStore(userId, storeId);
-		// if (isRemoved) {
-		// model.addAttribute("message", " 뙘 뾽 뒪 넗 뼱媛 궘 젣 릺 뿀 뒿 땲 떎.");
-		// } else {
-		// model.addAttribute("error", " 뙘 뾽 뒪 넗 뼱 궘 젣 뿉 떎 뙣 뻽 뒿 땲 떎.");
-		// }
-
-		return "redirect:/member/likedPopUpStores"; // 醫뗭븘 슂 븳 뙘 뾽 뒪 넗 뼱 紐⑸줉 럹 씠吏 濡 由щ떎 씠 젆 듃 븯寃 맗 땲 떎!
-	}
-
-	// 醫뗭븘 슂 븳 援우쫰 紐⑸줉 쓣 썙二쇰뒗 硫붿꽌 뱶
-	@GetMapping("/likedGoods")
-	public String getLikedGoods(@RequestParam("userId") String userId, Model model) {
-		log.info("醫뗭븘 슂 븳 援우쫰 紐⑸줉 議고쉶: " + userId);
-
-		// List<Goods> likedGoods = memberService.getLikedGoods(userId);
-		// model.addAttribute("likedGoods", likedGoods);
-
-		return "/member/likedGoods"; // 醫뗭븘 슂 븳 援우쫰 紐⑸줉 JSP
-	}
-
-	// 醫뗭븘 슂 븳 援우쫰 紐⑸줉 뿉 꽌 궘 젣 븯 뒗 硫붿꽌 뱶
-	@PostMapping("/removeLikedGoods")
-	public String removeLikedGoods(@RequestParam("userId") String userId, @RequestParam("goodsId") Long goodsId,
-			Model model) {
-		log.info("醫뗭븘 슂 븳 援우쫰  궘 젣: " + goodsId + " by " + userId);
-
-		// boolean isRemoved = memberService.removeLikedGoods(userId, goodsId);
-		// if (isRemoved) {
-		// model.addAttribute("message", "援우쫰媛 궘 젣 릺 뿀 뒿 땲 떎.");
-		// } else {
-		// model.addAttribute("error", "援우쫰 궘 젣 뿉 떎 뙣 뻽 뒿 땲 떎.");
-		// }
-
-		return "redirect:/member/likedGoods"; // 醫뗭븘 슂 븳 援우쫰 紐⑸줉 럹 씠吏 濡 由щ떎 씠 젆 듃 븯寃 맗 땲 떎!
-	}
-
-	// 愿 떖 궗 蹂 寃 硫붿꽌 뱶
-	@PostMapping("/updateInterests")
-	public String updateInterests(@RequestParam("userId") String userId, @RequestParam("interests") String interests,
-			Model model) {
-		log.info("愿  떖 궗 蹂 寃 : " + userId + " -> " + interests);
-
-		// memberService.updateInterests(userId, interests);
-		// model.addAttribute("message", "愿 떖 궗媛 꽦怨듭쟻 쑝濡 蹂 寃쎈릺 뿀 뒿 땲 떎.");
-
-		return "/member/updateSuccess"; // 꽦怨 떆 寃곌낵 럹 씠吏 濡 씠 룞 븯寃 맗 땲 떎!
-	}
-
-	// 쉶 썝 깉 눜 硫붿꽌 뱶
-	@PostMapping("/withdraw")
-	public String withdraw(@RequestParam("userId") String userId, Model model) {
-		log.info(" 쉶 썝  깉 눜  슂泥 : " + userId);
-
-		// boolean isWithdrawn = memberService.withdraw(userId);
-		// if (isWithdrawn) {
-		// model.addAttribute("message", " 쉶 썝 깉 눜媛 셿猷뚮릺 뿀 뒿 땲 떎.");
-		// } else {
-		// model.addAttribute("error", " 쉶 썝 깉 눜 뿉 떎 뙣 뻽 뒿 땲 떎.");
-		// }
-
-		return "redirect:/"; // 硫붿씤 럹 씠吏 濡 由щ떎 씠 젆 듃 븯寃 맗 땲 떎!
-	}
+	
 }
+
+    
+    
