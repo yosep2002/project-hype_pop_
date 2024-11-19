@@ -4,7 +4,6 @@ package org.hype.mapper;
 import java.util.List;
 
 import org.apache.ibatis.annotations.Param;
-import org.hype.domain.gLikeVO;
 import org.hype.domain.likeVO;
 import org.hype.domain.likedExhViewVO;
 import org.hype.domain.likedGoodsImgVO;

@@ -1,12 +1,5 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8"
-    pageEncoding="UTF-8"%>
-
-<!DOCTYPE html>
-<html lang="ko">
-<head>
-    <meta charset="UTF-8">
-    <title>푸터 예제</title>
-    <style>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<style>
 .footer-container {
     background-color: #f8f8f8;
     border-top: 1px solid #ccc;
@@ -19,9 +12,11 @@
     padding: 5px;
     color: black;
 }
-    </style>
+</style>
 </head>
 <body>
+    <!-- 네비게이션 바 -->
+    <jsp:include page="partyNavBar.jsp"/>
     <!-- 푸터 내용 -->
     <div class="footer-container">
         <div class="footer-contact">
@@ -29,8 +24,5 @@
             <h4>Copyrights 2024 by HYPE. All right reserved.</h4>
         </div>
     </div>
-    <!-- 네비게이션 바 -->
-    <jsp:include page="popUpNavBar.jsp"/>
-
 </body>
 </html>

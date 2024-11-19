@@ -29,13 +29,10 @@ document.addEventListener("DOMContentLoaded", function() {
     xhrLikeStatus.onload = function() {
         if (xhrLikeStatus.status === 200) {
             const isLiked = JSON.parse(xhrLikeStatus.responseText);
-            const heartElement = document.querySelector(".heart"); // heart
-																	// 클래스가 있는
-																	// 요소 선택
+            const heartElement = document.querySelector(".heart"); // heart 클래스가 있는 요소 선택
 
             if (isLiked) {
-                heartElement.classList.add("active"); // 좋아요가 눌려있으면 active 클래스
-														// 추가
+                heartElement.classList.add("active"); // 좋아요가 눌려있으면 active 클래스 추가
             }
         } else {
             console.error("좋아요 상태 확인 실패");
@@ -50,9 +47,7 @@ document.addEventListener("DOMContentLoaded", function() {
     xhrLikeCount.onload = function() {
         if (xhrLikeCount.status === 200) {
             const likeCount = xhrLikeCount.responseText; 
-            document.getElementById("likeCount").innerText = `${likeCount}`; // 좋아요
-																				// 개수
-																				// 표시
+            document.getElementById("likeCount").innerText = `${likeCount}`; // 좋아요 개수 표시
         } else {
             console.error("좋아요 개수 가져오기 실패");
         }
@@ -62,10 +57,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
 function loadExhibitionImages(exhNo) {
     const imageContainer = document.querySelector('.image-section');
-    const likeContainer = document.querySelector('#likeContainer');  // likeContainer를
-																		// 따로
-																		// 선택하여
-																		// 저장
+    const likeContainer = document.querySelector('#likeContainer');  // likeContainer를 따로 선택하여 저장
 
     // 이미지 섹션에 있는 기존 이미지를 삭제하고 로딩 메시지 추가
     imageContainer.innerHTML = '';  
@@ -79,8 +71,7 @@ function loadExhibitionImages(exhNo) {
     fetch(`/exhibition/exhImg?exhNo=${exhNo}`)
         .then(response => {
             if (!response.ok) {
-                throw new Error('서버 오류: ' + response.status);  // 응답이 정상적이지 않으면
-																// 오류 처리
+                throw new Error('서버 오류: ' + response.status);  // 응답이 정상적이지 않으면 오류 처리
             }
             return response.json();  // JSON으로 응답을 처리
         })
@@ -105,10 +96,9 @@ function loadExhibitionImages(exhNo) {
                     /exhibition/exhibitionImages/${item.uuid}_${encodeURIComponent(item.fileName.replace('.jpg', '-2x.jpg'))} 2x
                 `;
                 
-                img.src = `/exhibition/exhibitionImages/${item.uuid}_${encodeURIComponent(item.fileName)}`;  // 기본
-																												// 이미지
+                img.src = `/exhibition/exhibitionImages/${item.uuid}_${encodeURIComponent(item.fileName)}`;  // 기본 이미지
                 img.alt = `Exhibition Image: ${item.fileName}`;
-                img.loading = 'lazy';  // 이미지 로딩 최적화
+                img.loading = 'lazy';  // 이미지 로딩 최적화     
 
                 img.onload = () => {
                     img.style.display = 'block';  // 이미지가 로드되면 보이게 설정
@@ -154,9 +144,7 @@ function toggleHeart(element) {
             const countChange = isActive ? 1 : -1;
             const likeCountElement = document.getElementById("likeCount");
             const currentCount = parseInt(likeCountElement.innerText.replace(/[^0-9]/g, ''), 10);
-            likeCountElement.innerText = `${currentCount + countChange}`; // 좋아요
-																			// 개수
-																			// 업데이트
+            likeCountElement.innerText = `${currentCount + countChange}`; // 좋아요 개수 업데이트
         } else {
             console.error(isActive ? "좋아요 등록 실패" : "좋아요 삭제 실패");
         }
@@ -167,12 +155,10 @@ function toggleHeart(element) {
 }
 
 
-// 별점 선택 함수
+//별점 선택 함수
 document.addEventListener("DOMContentLoaded", () => {
     const ratingStars = document.querySelectorAll("#newReviewStars span");
-    const selectedRatingDisplay = document.querySelector("#selectedRating span"); // span
-																					// 요소
-																					// 선택
+    const selectedRatingDisplay = document.querySelector("#selectedRating span"); // span 요소 선택
 
     // 별점 클릭 이벤트 처리
     ratingStars.forEach(star => {
@@ -220,10 +206,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
 document.getElementById("addReply").onclick = function() {
     var reviewText = document.getElementById("reviewText").value;
-    var selectedRating = document.querySelector("#selectedRating span").textContent; // 선택한
-																						// 별점
-																						// 값을
-																						// 가져옴
+    var selectedRating = document.querySelector("#selectedRating span").textContent; // 선택한 별점 값을 가져옴
     var exhNo = document.getElementById("exhNo").value;
     var reviewForm = document.getElementById("reviewForm");
 
@@ -311,33 +294,29 @@ function fetchAndDisplayReviews(exhNo, page = 1) {
             reviewsList.innerHTML = ''; // 기존 목록 초기화
 
             // data.reviews가 정의되고 배열일 경우만 처리
-            if (Array.isArray(data.reviews) && data.reviews.length > 0) {  // reviews
-																			// 배열이
-																			// 존재하는지
-																			// 확인
+            if (Array.isArray(data.reviews) && data.reviews.length > 0) {  // reviews 배열이 존재하는지 확인
                 data.reviews.forEach(reply => {
                     const listItem = document.createElement('li');
                     listItem.innerHTML = `
                         <div class="reply-container">
-                    		<div class="reply-header">
-                    			<input type="hidden" class="exhReplyNo" value="${reply.exhReplyNo}">
-                    			<input type="hidden" class="userNo" value="${reply.userNo}">
-                    			<strong class="user-no" id="user-no">유저번호: ${reply.userNo}</strong>
-                    			<div class="exh-score">
-                    			${generateStarIcons(reply.exhScore, true)}
-                    			<input type="hidden" class="score-value" value="${reply.exhScore}">
-                    			</div>
-                    			<span class="exh-reg-date">등록 날짜: ${new Date(reply.exhRegDate).toLocaleDateString()}</span>
-                    		</div>
-                    			<p class="exh-comment">${reply.exhComment}</p>
-                    		<div class="button-container">
-                    			<input type="button" class="updateReply" value="수정하기">
-                    			<input type="button" class="updateReplySend" value="수정완료" style="display: none">
-                    			<input type="button" class="updateReplyCancel" value="수정취소" style="display: none">
-                    			<input type="button" class="deleteReply" value="삭제하기">
-                    		</div>
-                    	</div>
-
+                            <div class="reply-header">
+                                <input type="hidden" class="exhReplyNo" value="${reply.exhReplyNo}">
+                                <input type="hidden" class="userNo" value="${reply.userNo}">
+                                <strong class="user-no" id="user-no">유저번호: ${reply.userNo}</strong>
+                                <div class="exh-score">
+                                    ${generateStarIcons(reply.exhScore, true)}
+                                    <input type="hidden" class="score-value" value="${reply.exhScore}">
+                                </div>
+                                <span class="exh-reg-date">등록 날짜: ${new Date(reply.exhRegDate).toLocaleDateString()}</span>
+                            </div>
+                            <textarea class="exh-comment" rows="10" cols="3" readonly>${reply.exhComment}</textarea>
+                            <div class="button-container">
+                                <input type="button" class="updateReply" value="수정하기">
+                                <input type="button" class="updateReplySend" value="수정완료" style="display: none">
+                                <input type="button" class="updateReplyCancel" value="수정취소" style="display: none">
+                                <input type="button" class="deleteReply" value="삭제하기">
+                            </div>
+                        </div>
                     `;
                     
                     reviewsList.appendChild(listItem);
@@ -356,8 +335,7 @@ function fetchAndDisplayReviews(exhNo, page = 1) {
                         deleteReplyBtn.style.display = 'none';
                     }
                 });
-                renderPaginationControls(data.totalPages);  // totalPages 값을
-															// 서버로부터 전달받아 처리
+                renderPaginationControls(data.totalPages);  // totalPages 값을 서버로부터 전달받아 처리
             } else {
                 reviewsList.innerHTML = '<li>후기가 없습니다.</li>';
             }
@@ -386,7 +364,7 @@ function renderPaginationControls(totalPages) {
     }
 }
 
-// 이벤트 위임 설정
+//이벤트 위임 설정
 document.getElementById('reviewsList').addEventListener('click', function(event) {
     if (event.target.classList.contains('updateReply')) {
         handleUpdateClick(event.target);
@@ -424,16 +402,11 @@ function handleUpdateClick(button) {
 function handleUpdateSendClick(button) {
     const replyContainer = button.closest('.reply-container');
     const textarea = replyContainer.querySelector('.exh-comment');
-    const exhReplyNo = replyContainer.querySelector('.exhReplyNo').value; // 후기
-																			// 번호
-																			// 가져오기
-    const userNoText = replyContainer.querySelector('.user-no').textContent; // 유저번호
-																				// 텍스트
-																				// 가져오기
+    const exhReplyNo = replyContainer.querySelector('.exhReplyNo').value; // 후기 번호 가져오기
+    const userNoText = replyContainer.querySelector('.user-no').textContent; // 유저번호 텍스트 가져오기
     const userNo = userNoText.split(': ')[1];
     const updatedComment = textarea.value;
-    const exhScore = replyContainer.querySelector('.score-value').value; // 수정된
-																			// 별점
+    const exhScore = replyContainer.querySelector('.score-value').value; // 수정된 별점
 
     // 유효성 검사
     if (!updatedComment) {
@@ -452,23 +425,15 @@ function handleUpdateSendClick(button) {
                 alert("후기가 수정되었습니다.");
                 textarea.setAttribute('readonly', true); // 텍스트 영역 읽기 전용으로 변경
                 button.style.display = 'none'; // 수정 완료 버튼 숨기기
-                replyContainer.querySelector('.updateReplyCancel').style.display = 'none'; // 수정
-																							// 취소
-																							// 버튼
-																							// 숨기기
+                replyContainer.querySelector('.updateReplyCancel').style.display = 'none'; // 수정 취소 버튼 숨기기
                 
                 // 변경된 내용을 즉시 보여주기
                 fetchAndDisplayReviews(); // 댓글 목록 새로 고침
                 
                 // 수정 날짜 업데이트
-                const updateDateSpan = replyContainer.querySelector('.exh-reg-date'); // 등록
-																						// 날짜
-																						// 요소
-																						// 가져오기
+                const updateDateSpan = replyContainer.querySelector('.exh-reg-date'); // 등록 날짜 요소 가져오기
                 const currentDate = new Date(); // 현재 날짜 가져오기
-                updateDateSpan.textContent = `수정 날짜: ${currentDate.toLocaleDateString()}`; // 수정
-																							// 날짜로
-																							// 업데이트
+                updateDateSpan.textContent = `수정 날짜: ${currentDate.toLocaleDateString()}`; // 수정 날짜로 업데이트
                 updateAverageStarRating();
             } else {
                 alert("후기 수정이 실패했습니다.");
@@ -596,14 +561,11 @@ document.addEventListener('DOMContentLoaded', function() {
 // 댓글 등록 후 폼 초기화 함수
 function resetReviewForm() {
     document.getElementById("reviewText").value = ""; // 후기 텍스트 초기화
-    document.querySelectorAll("#newReviewStars span").forEach(s => s.classList.remove("active")); // 별점
-																									// 초기화
-    document.querySelector("#selectedRating span").textContent = "0"; // 선택한
-																		// 별점 표시
-																		// 초기화
+    document.querySelectorAll("#newReviewStars span").forEach(s => s.classList.remove("active")); // 별점 초기화
+    document.querySelector("#selectedRating span").textContent = "0"; // 선택한 별점 표시 초기화
 }
 
-// 평균 별점 가져오기
+//평균 별점 가져오기
 function updateAverageStarRating() {
     const exhNo = document.getElementById("exhNo").value;
 
@@ -622,8 +584,7 @@ function updateAverageStarRating() {
             }
 
             const roundedRating = Math.round(avgRating);  // 평균 별점 반올림 처리
-            const stars = document.querySelectorAll("#averageStarRating span"); // 별점
-																				// 아이콘
+            const stars = document.querySelectorAll("#averageStarRating span"); // 별점 아이콘
 
             // 평균 별점 값 소수점 2자리까지 표시
             const formattedRating = avgRating.toFixed(1);  
@@ -650,7 +611,7 @@ function updateAverageStarRating() {
 }
 
 
-// 전시회 상세 이미지 로드 함수
+//전시회 상세 이미지 로드 함수
 function loadExhibitionDetailImages(exhNo) {
     const detailedImageContainer = document.getElementById('detailedImageContainer');
     detailedImageContainer.innerHTML = '';  // 기존 이미지 삭제
@@ -664,8 +625,7 @@ function loadExhibitionDetailImages(exhNo) {
     fetch(`/exhibition/exhDetailImg?exhNo=${exhNo}`)
         .then(response => {
             if (!response.ok) {
-                throw new Error('서버 오류: ' + response.status);  // 응답이 정상적이지 않으면
-																// 오류 처리
+                throw new Error('서버 오류: ' + response.status);  // 응답이 정상적이지 않으면 오류 처리
             }
             return response.json();  // JSON으로 응답을 처리
         })
@@ -689,10 +649,9 @@ function loadExhibitionDetailImages(exhNo) {
                     /exhibition/exhibitionDetailImages/${item.uuid}_${encodeURIComponent(item.fileName.replace('.jpg', '-2x.jpg'))} 2x
                 `;
                 
-                img.src = `/exhibition/exhibitionDetailImages/${item.uuid}_${encodeURIComponent(item.fileName)}`;  // 기본
-																													// 이미지
+                img.src = `/exhibition/exhibitionDetailImages/${item.uuid}_${encodeURIComponent(item.fileName)}`;  // 기본 이미지
                 img.alt = `Exhibition Image: ${item.fileName}`;
-                img.loading = 'lazy';  // 이미지 로딩 최적화
+                img.loading = 'lazy';  // 이미지 로딩 최적화     
 
                 // 이미지 로딩 완료 후 보여주기
                 img.onload = () => {
@@ -725,7 +684,7 @@ document.addEventListener('DOMContentLoaded', function() {
     loadExhibitionImages(exhNo);
 });
 
-// 로그인 모달을 표시하는 함수
+//로그인 모달을 표시하는 함수
 function showLoginModal() {
     var modal = document.getElementById("loginModal");
     modal.style.display = "block";

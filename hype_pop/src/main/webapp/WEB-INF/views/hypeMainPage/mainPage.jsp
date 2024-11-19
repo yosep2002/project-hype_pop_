@@ -1,5 +1,5 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8"
-    pageEncoding="UTF-8"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ taglib uri = "http://www.springframework.org/security/tags" prefix = "sec" %>  
 <!DOCTYPE html>
 <html>
 <head>
@@ -47,6 +47,10 @@
 </head>
 <body>
     <!-- 메인 로고 버튼 -->
+   	<sec:authorize access="isAuthenticated()">
+		<sec:authentication property="principal" var="pinfo"/>
+   		<input type="hidden" id="userNo" value="${pinfo.member.userNo}">
+	</sec:authorize>
     <button id="mainLogoButton" onclick="showLogos()">
         <img src="/resources/images/mainLogo.png" alt="메인 로고">
     </button>
@@ -56,7 +60,7 @@
         <a href="/hypePop/popUpMain">
             <img src="/resources/images/popUpLogo.png" alt="팝업 스토어">
         </a>
-        <a href="/goodsStore/goodsMain">
+        <a href="javascript:goToGoodsMain();">
             <img src="/resources/images/goodsLogo.png" alt="굿즈 스토어">
         </a>
         <a href="/exhibition/exhibitionMain" id="exhibition">
@@ -69,6 +73,15 @@
         function showLogos() {
             var logoContainer = document.getElementById("logoContainer");
             logoContainer.classList.toggle("show"); // 'show' 클래스 토글로 애니메이션 적용
+        }
+        function goToGoodsMain() {
+            let userNoElement = document.getElementById("userNo");
+            let userNo = userNoElement ? parseInt(userNoElement.value) : null;
+            if (userNo) {
+                location.href = "/goodsStore/goodsMain?userNo=" + userNo;
+            } else {
+                location.href = "/goodsStore/goodsMain";
+            }
         }
     </script>
 </body>

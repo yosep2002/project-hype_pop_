@@ -390,7 +390,7 @@ button:disabled {
 </style>
 </head>
 <body>
-   <jsp:include page="layout/popUpHeader.jsp" />
+   <jsp:include page="layout/goodsHeader.jsp" />
 	<sec:authorize access="isAuthenticated()">
 		<sec:authentication property="principal" var="pinfo"/>
    		<input type="hidden" id="userNo" value="${pinfo.member.userNo}">
@@ -462,7 +462,7 @@ button:disabled {
     <button id="scrollUp">위로</button>
     <button id="scrollDown">아래로</button>
 </div>
-   <jsp:include page="layout/popUpFooter.jsp" />
+   <jsp:include page="layout/goodsFooter.jsp" />
    <jsp:include page="layout/goodsNavBar.jsp" />
 </body>
 <script type="text/javascript" src="/resources/goodsJs/gReply.js"></script>

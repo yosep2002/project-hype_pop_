@@ -1,7 +1,10 @@
 document.addEventListener("DOMContentLoaded", function() {
-	let userNoElement = document.getElementById("userNo");
-	let userNo = userNoElement ? userNoElement.value : null;
+	const userNoElement = document.getElementById("userNo");
+	const userIdElement = document.getElementById("userId");
+	const userNo = userNoElement ? userNoElement.value : null;
+	const userId = userIdElement ? userIdElement.value : null;
 	console.log(userNo);
+	console.log(userId);
 	
 	function performSearch() {
 		const searchText = document.getElementById('goodsSearchBox').value;
@@ -18,7 +21,7 @@ document.addEventListener("DOMContentLoaded", function() {
 	
 	if(localStorage.getItem('searchText') === '' || localStorage.getItem('searchText') === null) {
 	    const searchText = document.getElementById('goodsSearchBox');
-	    searchText.placeholder = '검색할 굿즈 이름을 입력하세요';
+	    searchText.placeholder = '검색어 입력';
 	} else {
 	    const savedSearchText = localStorage.getItem('searchText');
 	    const searchText = document.getElementById('goodsSearchBox');

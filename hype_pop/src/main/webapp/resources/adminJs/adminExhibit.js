@@ -8,6 +8,22 @@ window.onload = function() {
         const fileName1 = fileName1Element.value;
         fetchImage(category1, fileName1, "beforeImg1");
     }
+
+    // 'beforeFileName2' input 요소가 존재하는 경우에만 파일명을 가져오고 이미지 불러오기
+//    const fileName2Element = document.querySelector('input[name="beforeFileName2"]');
+//    if (fileName2Element) {
+//        const fileName2 = fileName2Element.value;
+//        fetchImage(category2, fileName2, "beforeImg2");
+//    }
+//    
+//    // 서버에서 파일명을 가져옴 (popStore 객체에서 가져오는 방식)
+//    const fileName1 = document.querySelector('input[name="beforeFileName1"]').value;
+//    const fileName2 = document.querySelector('input[name="beforeFileName2"]').value;
+//    
+//    // fetchImage 함수 호출하여 두 이미지를 각각 불러오기
+//    fetchImage(category1, fileName1, "beforeImg1");
+//    fetchImage(category2, fileName2, "beforeImg2");
+//    console.log(fileName1, fileName2);
     
 };
 
@@ -27,6 +43,8 @@ function fetchImage(category, fileName, imgElementId) {
         .then(blob => {
             const imageObjectURL = URL.createObjectURL(blob);
             document.getElementById(imgElementId).src = imageObjectURL;
+//            document.getElementById("beforeImg1").src = imageObjectURL; // 해당 ID의 이미지에 표시
+//            document.getElementById("beforeImg2").src = imageObjectURL; // 해당 ID의 이미지에 표시
         })
         .catch(error => {
             console.error('이미지 로딩 실패:', error);
@@ -63,51 +81,107 @@ document.querySelector('#exhDetailImg').addEventListener('click', function() {
 });
 
 // 배너 이미지 파일 미리보기 및 검증
+//document.querySelector('#exhBannerImageFile').addEventListener('input', function(event) {
+//    const files = event.target.files;
+//    const uploadedBannerImagesDiv = document.getElementById('uploadedExBannerImages');
+//    uploadedBannerImagesDiv.innerHTML = ''; // 기존 이미지 초기화
+//
+//    // 최대 한 개의 배너 이미지 파일만 선택하도록 제한
+//    const file = files[0]; // 첫 번째 파일만 선택
+//    if (file && checkFile(file.name, file.size)) {
+//        const reader = new FileReader();
+//        reader.onload = function(e) {
+//            const img = document.createElement('img');
+//            img.src = e.target.result;
+//            img.style.width = '150px';
+//            img.style.marginRight = '10px';
+//            uploadedBannerImagesDiv.appendChild(img);
+//        };
+//        reader.readAsDataURL(file);
+//    }
+//
+//    // input 값 초기화 (중복 방지)
+//    event.target.value = '';
+//});
 document.querySelector('#exhBannerImageFile').addEventListener('input', function(event) {
     const files = event.target.files;
-    const uploadedBannerImagesDiv = document.getElementById('uploadedExBannerImages');
-    uploadedBannerImagesDiv.innerHTML = ''; // 기존 이미지 초기화
+    const uploadedExBannerImagesDiv = document.getElementById('uploadedExBannerImages');
 
-    // 최대 한 개의 배너 이미지 파일만 선택하도록 제한
-    const file = files[0]; // 첫 번째 파일만 선택
-    if (file && checkFile(file.name, file.size)) {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            const img = document.createElement('img');
-            img.src = e.target.result;
-            img.style.width = '150px';
-            img.style.marginRight = '10px';
-            uploadedBannerImagesDiv.appendChild(img);
-        };
-        reader.readAsDataURL(file);
+ // 요소가 존재하는지 확인
+    if (uploadedExBannerImagesDiv) {
+        // 기존 이미지 미리보기를 초기화
+        uploadedExBannerImagesDiv.innerHTML = '';
+
+        // 최대 한 개의 배너 이미지 파일만 선택하도록 제한
+        Array.from(files).slice(0, 1).forEach((file) => {
+            if (!checkFile(file.name, file.size)) {
+                return; // 파일 검증 실패 시 종료
+            }
+
+            // 이미지 미리보기 생성
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const img = document.createElement('img');
+                img.src = e.target.result; // 파일의 Data URL
+                img.style.width = '150px'; // 이미지 크기 조절
+                img.style.marginRight = '10px'; // 간격 조정
+                uploadedExBannerImagesDiv.appendChild(img); // 미리보기 div에 추가
+            };
+            reader.readAsDataURL(file); // 파일을 Data URL로 읽기
+        });
+    } else {
+        console.log("uploadedExBannerImages...");
     }
-
-    // input 값 초기화 (중복 방지)
-    event.target.value = '';
 });
 
 // 상세 이미지 파일 미리보기 및 검증
+//document.querySelector('#exhDetailImageFile').addEventListener('input', function(event) {
+//    const files = event.target.files;
+//    const uploadedBannerImagesDiv = document.getElementById('uploadedExDetailImages');
+//    uploadedBannerImagesDiv.innerHTML = ''; // 기존 이미지 초기화
+//
+//    // 최대 한 개의 배너 이미지 파일만 선택하도록 제한
+//    const file = files[0]; // 첫 번째 파일만 선택
+//    if (file && checkFile(file.name, file.size)) {
+//        const reader = new FileReader();
+//        reader.onload = function(e) {
+//            const img = document.createElement('img');
+//            img.src = e.target.result;
+//            img.style.width = '150px';
+//            img.style.marginRight = '10px';
+//            uploadedBannerImagesDiv.appendChild(img);
+//        };
+//        reader.readAsDataURL(file);
+//    }
+//
+//    // input 값 초기화 (중복 방지)
+//    event.target.value = '';
+//});
+
 document.querySelector('#exhDetailImageFile').addEventListener('input', function(event) {
     const files = event.target.files;
-    const uploadedBannerImagesDiv = document.getElementById('uploadedExDetailImages');
-    uploadedBannerImagesDiv.innerHTML = ''; // 기존 이미지 초기화
+    const uploadedExDetailImagesDiv = document.getElementById('uploadedExDetailImages');
 
-    // 최대 한 개의 배너 이미지 파일만 선택하도록 제한
-    const file = files[0]; // 첫 번째 파일만 선택
-    if (file && checkFile(file.name, file.size)) {
+    // 기존 이미지 미리보기를 초기화
+    uploadedExDetailImagesDiv.innerHTML = '';
+
+    // 최대 두 개의 상세 이미지 파일만 선택하도록 제한
+    Array.from(files).slice(0, 2).forEach((file) => {
+        if (!checkFile(file.name, file.size)) {
+            return; // 파일 검증 실패 시 종료
+        }
+
+        // 이미지 미리보기 생성
         const reader = new FileReader();
         reader.onload = function(e) {
             const img = document.createElement('img');
-            img.src = e.target.result;
-            img.style.width = '150px';
-            img.style.marginRight = '10px';
-            uploadedBannerImagesDiv.appendChild(img);
+            img.src = e.target.result; // 파일의 Data URL
+            img.style.width = '150px'; // 이미지 크기 조절
+            img.style.marginRight = '10px'; // 간격 조정
+            uploadedExDetailImagesDiv.appendChild(img); // 미리보기 div에 추가
         };
-        reader.readAsDataURL(file);
-    }
-
-    // input 값 초기화 (중복 방지)
-    event.target.value = '';
+        reader.readAsDataURL(file); // 파일을 Data URL로 읽기
+    });
 });
 
 // 전시회 등록 버튼 클릭 이벤트

@@ -52,75 +52,80 @@
 	    <h3>주차 가능 여부: ${storeInfo.parkingInfo}</h3>
 	    <h3>팝업스토어 SNS 주소: ${storeInfo.snsAd}</h3>
 	</div>
-		<!-- 기타 정보 -->
-<!-- 평균 별점 섹션 -->
-<div id="popUpScoreAvg" style="font-size: 1.2em; color: #FFD700; background-color: white; border-radius: 15px; padding: 10px; text-align: center; display: inline-block; position: relative; left: -200px;">
-    <span>평균 별점: </span>
-    <span id="averageRating">${storeInfo.avgRating}</span>
-</div>
-	
-	<!-- 리뷰 작성 폼 -->
-	<form id="reviewForm"  style="display:none;">
-	    <div class="StarRating" id="newReviewStars">
-	        <span data-value="1">★</span>
-	        <span data-value="2">★</span>
-	        <span data-value="3">★</span>
-	        <span data-value="4">★</span>
-	        <span data-value="5">★</span>
-	    </div>	
-	    <textarea id="reviewText" name="reviewText" placeholder="후기를 작성해주세요!" rows="5"></textarea>
-	    <input type="hidden" id="rating" name="rating" value="0">
-	    <input type="hidden" id="psNo" name="psNo" value="${storeInfo.psNo}">
-	    <input type="hidden" id="userNo" name="userNo" value="2">
-	    <input type="button" value="등록하기" onclick="send(this.form)">
-	</form>
-	
-	<!-- 작성한 댓글이 없을 때 표시할 메시지 -->
-	<p id="noReviewMessage" style="display: none;">작성한 댓글이 없습니다!</p>
-	
-	<!-- 내가 남긴 후기 -->
-	<div id="userReviewSection" style="display:none;">
-	    <div id="reviewList">
-	        <!-- 동적으로 리뷰 목록 추가 -->
-	    </div>
-	</div>
-	
-	<form id="updateForm" style="display:none;">
-    <div class="StarRating" id="newReviewStars">
-        <span data-value="1">★</span>
-        <span data-value="2">★</span>
-        <span data-value="3">★</span>
-        <span data-value="4">★</span>
-        <span data-value="5">★</span>
-    </div>  
-    <textarea id="updateText" name="updateText" placeholder="후기를 수정해주세요!" rows="5"></textarea>
-    <input type="hidden" id="rating" name="rating" value="0">
-    <input type="hidden" id="psNo" name="psNo" value="${storeInfo.psNo}">
-    <input type="hidden" id="userNo" name="userNo" value="100"> 
-   <span
-    data-storeInfo='{
-        "latitude": ${storeInfo.latitude}, 
-        "longitude": ${storeInfo.longitude}, 
-        "psName": "${fn:escapeXml(storeInfo.psName)}", 
-        "psStartDate": "${fn:escapeXml(storeInfo.psStartDate)}", 
-        "psEndDate": "${fn:escapeXml(storeInfo.psEndDate)}"
-    }'
-    data-psNo='${storeInfo.psNo}'>
-    </span> 
-	<input type="button" value="수정 취소" onclick="updateCancel()">
-    <input type="button" value="수정 완료" onclick="update(this.form)">
-</form>
-<!-- 내가 남긴 후기 아래에 다른 사용자들의 후기를 볼 수 있는 섹션 추가 -->
-	<div id="allReviewsSection">
-    <h2>다른 사용자가 남긴 후기</h2>
-    <div id="allReviewsList">
-        <!-- 동적으로 다른 사용자의 리뷰 목록 추가 -->
+<!-- 전체 리뷰 래퍼 -->
+<div id="reviewWrapper">
+
+    <!-- 평균 별점 섹션 -->
+    <h2>후기들</h2>
+    <div id="popUpScoreAvg">
+        <span>평균 별점: </span>
+        <span id="averageRating">${storeInfo.avgRating}</span>
     </div>
-</div>
-<div id="pagination">
-    <button id="prevPage" onclick="changePage(currentPage - 1)">이전</button>
-    <span id="pageNumbers"></span>
-    <button id="nextPage" onclick="changePage(currentPage + 1)">다음</button>
+
+    <!-- 리뷰 작성 폼 -->
+    <form id="reviewForm" style="display:none;">
+        <div class="StarRating" id="newReviewStars">
+            <span data-value="1">★</span>
+            <span data-value="2">★</span>
+            <span data-value="3">★</span>
+            <span data-value="4">★</span>
+            <span data-value="5">★</span>
+        </div>  
+        <textarea id="reviewText" name="reviewText" placeholder="후기를 작성해주세요!" rows="5"></textarea>
+        <input type="hidden" id="rating" name="rating" value="0">
+        <input type="hidden" id="psNo" name="psNo" value="${storeInfo.psNo}">
+        <input type="hidden" id="userNo" name="userNo" value="2">
+        <input type="button" value="등록하기" onclick="send(this.form)">
+    </form>
+
+    <!-- 작성한 댓글이 없을 때 표시할 메시지 -->
+    <p id="noReviewMessage" style="display: none;">작성한 댓글이 없습니다!</p>
+
+    <!-- 내가 남긴 후기 -->
+    <div id="userReviewSection" style="display:none;">
+        <div id="reviewList">
+            <!-- 동적으로 리뷰 목록 추가 -->
+        </div>
+    </div>
+
+    <!-- 후기 수정 폼 -->
+    <form id="updateForm" style="display:none;">
+        <div class="StarRating" id="newReviewStars">
+            <span data-value="1">★</span>
+            <span data-value="2">★</span>
+            <span data-value="3">★</span>
+            <span data-value="4">★</span>
+            <span data-value="5">★</span>
+        </div>  
+        <textarea id="updateText" name="updateText" placeholder="후기를 수정해주세요!" rows="5"></textarea>
+        <input type="hidden" id="rating" name="rating" value="0">
+        <input type="hidden" id="psNo" name="psNo" value="${storeInfo.psNo}">
+        <input type="hidden" id="userNo" name="userNo" value="100"> 
+        <span data-storeInfo='{
+            "latitude": ${storeInfo.latitude}, 
+            "longitude": ${storeInfo.longitude}, 
+            "psName": "${fn:escapeXml(storeInfo.psName)}", 
+            "psStartDate": "${fn:escapeXml(storeInfo.psStartDate)}", 
+            "psEndDate": "${fn:escapeXml(storeInfo.psEndDate)}"
+        }' data-psNo='${storeInfo.psNo}'></span> 
+        <input type="button" value="수정 취소" onclick="updateCancel()">
+        <input type="button" value="수정 완료" onclick="update(this.form)">
+    </form>
+
+    <!-- 다른 사용자의 후기 섹션 -->
+    <div id="allReviewsSection">
+        <div id="allReviewsList">
+            <!-- 동적으로 다른 사용자의 리뷰 목록 추가 -->
+        </div>
+    </div>
+
+    <!-- 페이지 네비게이션 -->
+    <div id="pagination">
+        <button id="prevPage" onclick="changePage(currentPage - 1)">이전</button>
+        <span id="pageNumbers"></span>
+        <button id="nextPage" onclick="changePage(currentPage + 1)">다음</button>
+    </div>
+    
 </div>
 <!-- 체크박스 추가 -->
 <label>

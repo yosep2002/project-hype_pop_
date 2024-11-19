@@ -113,4 +113,26 @@ public class PopUpRestController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("liked", false));
         }
     }
+   
+    @GetMapping(value = "/getStoreAvg", produces = "application/json")
+    @ResponseBody
+    public ResponseEntity<Map<String, Object>> getStoreAverageRating(@RequestParam int psNo) {
+        System.out.println("별점 평균을 요청받은 PSNO : " + psNo);
+        try {
+            // 서비스에서 해당 psNo의 평균 별점 가져오기
+            Double averageRating = service.getAvgRating(psNo);
+
+            // 성공 시 평균 별점 데이터를 반환
+            return ResponseEntity.ok(Map.of(
+                "status", "success",
+                "averageRating", averageRating
+            ));
+        } catch (Exception e) {
+            log.error("평균 별점 가져오기 실패: ", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of(
+                "status", "error",
+                "message", "서버 오류로 데이터를 가져오지 못했습니다."
+            ));
+        }
+    }
 }

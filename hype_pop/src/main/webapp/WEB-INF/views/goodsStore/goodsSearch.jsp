@@ -146,7 +146,7 @@ body {
 
 /* 검색 결과 리스트 컨테이너 */
 .goodsContainer {
-    width: 80%; /* 화면 크기에 따라 반응하는 너비 설정 */
+    width: 50%; /* 화면 크기에 따라 반응하는 너비 설정 */
     max-width: 1200px; /* 최대 너비 제한 */
     margin: 0 auto; /* 중앙 정렬 */
     padding: 2rem; /* 반응형 여백 */
@@ -166,7 +166,7 @@ body {
     margin-bottom: 2rem;
     display: flex;
     align-items: center;
-    position: relative;
+    position: relative; /* 좋아요 버튼 기준 위치 설정 */
     transition: transform 0.3s ease, background-color 0.3s ease;
 }
 
@@ -179,13 +179,13 @@ body {
 .goodsImg {
     flex: 0 0 auto;
     margin-right: 1.5rem;
-    width: 15%; /* 상대적인 너비 */
-    aspect-ratio: 4 / 3; /* 비율 유지 */
-    object-fit: cover;
-    border-radius: 0.5rem;
-    background-size: cover;
-    background-position: center center;
-    background-repeat: no-repeat;
+    width: 200px; /* 고정 너비 */
+    height: 150px; /* 고정 높이 */
+    object-fit: cover; /* 이미지 비율 유지 및 자르기 */
+    border-radius: 0.5rem; /* 모서리를 둥글게 */
+    background-size: cover; /* 배경 이미지 크기 맞춤 */
+    background-position: center center; /* 배경 이미지 중앙 정렬 */
+    background-repeat: no-repeat; /* 배경 이미지 반복 없음 */
 }
 
 /* 카드 내부 정보 */
@@ -195,7 +195,26 @@ body {
 }
 
 /* 텍스트 및 정보 스타일 */
-.goodsLike,
+
+.goodsLike {
+    position: absolute; /* 부모 요소(goodsResult)를 기준으로 절대 위치 지정 */
+    top: 10px; /* 상단 여백 */
+    right: 10px; /* 우측 여백 */
+    display: inline-flex; /* 심볼과 텍스트 가로 정렬 */
+    align-items: center;
+    justify-content: center;
+    background-color: #ffffff;
+    color: #00aff0;
+    font-weight: bold;
+    font-size: 1rem;
+    padding: 5px 10px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+    transition: transform 0.3s ease, background-color 0.3s ease;
+}
+
+
 .goodsPrice,
 .goodsExp,
 .goodsSellDate {
@@ -216,7 +235,7 @@ body {
     display: inline-block;
     margin-right: 0.5rem;
     padding: 0.5rem 1rem;
-    background-color: rgba(255, 255, 255, 0.3);
+    background-color: rgba(0, 0, 0, 0.7);
     color: #ffffff;
     border-radius: 0.375rem;
     font-size: 0.875rem;
@@ -268,11 +287,7 @@ body {
 </style>
 </head>
 <body>
-	<jsp:include page="layout/popUpHeader.jsp" />
-	<sec:authorize access="isAuthenticated()">
-		<sec:authentication property="principal" var="pinfo"/>
-   		<input type="hidden" id="userNo" value="${pinfo.member.userNo}">
-	</sec:authorize>
+	<jsp:include page="layout/goodsHeader.jsp" />
 	<div class="searchCategory">
 		<span id="priceHigh">가격 높은순</span>
 		<span id="priceLow">가격 낮은순</span>
@@ -304,7 +319,7 @@ body {
     <div class="goodsContainer" id="goodsContainer">
     </div>
     <button id="loadMoreBtn">더보기</button>
-	<jsp:include page="layout/popUpFooter.jsp" />
+	<jsp:include page="layout/goodsFooter.jsp" />
 	<jsp:include page="layout/goodsNavBar.jsp" />
 </body>
 <script type="text/javascript" src="/resources/goodsJs/goodsHeader.js"></script>

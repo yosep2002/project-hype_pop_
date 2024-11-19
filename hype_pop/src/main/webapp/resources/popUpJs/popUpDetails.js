@@ -4,6 +4,8 @@ let userNo = document.getElementById('userNo').value;
 let currentPage = 1; // 현재 페이지를 저장할 변수
 const amount = 10; // 한 페이지에 보여줄 리뷰 수
 
+
+
 checkUserLiked(psNo, userNo);
 fetchOtherReviews(psNo, userNo, page = 1);
 
@@ -285,9 +287,22 @@ function fetchUserReviews(psNo, userNo) {
 
 // DOMContentLoaded 이벤트 핸들러
 document.addEventListener("DOMContentLoaded", function () {
-	  // 'fileData' 클래스의 input 요소에서 값을 가져오기
+	// span 내의 평균 별점 값 가져오기
+	let averageRatingText = document.getElementById("averageRating").textContent;
 
+	// 텍스트 값을 숫자로 변환
+	let averageRating = parseFloat(averageRatingText);
 
+	console.log("평균 별점 값: ", averageRating);  // 값이 제대로 출력되는지 확인
+
+	// 숫자 여부를 확인하고, 소수 첫째 자리까지 반올림
+	if (!isNaN(averageRating)) {
+	    let roundedRating = averageRating.toFixed(1);
+	    document.getElementById("averageRating").textContent = roundedRating; // 결과를 화면에 반영
+	} else {
+	    console.error("평균 별점이 숫자가 아닙니다.");
+	}
+	
 	const fileData = document.querySelector(".fileData");
 
 	if (fileData) {
@@ -420,12 +435,13 @@ function updateLikeCount(psNo) {
         alert('좋아요 수 업데이트 중 오류가 발생했습니다.');
     });
 }
-   // 댓글 수정 함수 
+
+//댓글 수정 함수 
 function update(f) {
     const updateText = document.getElementById('updateText').value;
     const selectedRating = document.querySelector('#newReviewStars span.selected'); // 선택된 별점
     const psScore = window.selectedRating;
-    console.log(psScore);
+
     if (updateText.trim() === '' ) {
         alert('리뷰 내용을 입력해주세요.'); // 경고 메시지 표시
         return;
@@ -455,12 +471,37 @@ function update(f) {
         document.getElementById('updateText').value = ''; // 리뷰 입력란 초기화
         document.getElementById('updateForm').style.display = 'none'; // 리뷰 작성 폼 숨기기
         document.getElementById('noReviewMessage').style.display = 'none'; // 메시지 숨기기
+
+        // 전체 별점 평균을 다시 받아옴
+        fetchAverageRating(psNo);
     })
     .catch(err => {
         console.error('Error:', err);
         alert('리뷰 수정 중 문제가 발생했습니다. 다시 시도해 주세요.');
     });
-} 
+}
+
+//전체 별점 평균을 받아오는 함수
+function fetchAverageRating(psNo) {
+	fetch(`/hypePop/getStoreAvg?psNo=${psNo}`) // 서버에서 psNo로 평균 별점 정보를 가져오는 API
+    .then(response => response.json())
+    .then(data => {
+        if (data.status === 'success' && data.averageRating) {
+            let averageRating = parseFloat(data.averageRating);
+            if (!isNaN(averageRating)) {
+                // 소수점 첫째 자리로 반올림
+                let roundedRating = averageRating.toFixed(1);
+                document.getElementById("averageRating").textContent = roundedRating; // 결과를 화면에 반영
+            }
+        } else {
+            console.error('평균 별점 데이터를 가져오는 데 실패했습니다.');
+        }
+    })
+    .catch(err => {
+        console.error('Error fetching average rating:', err);
+    });
+}
+
 // 별점 유지 함수
 document.querySelector('form').addEventListener('submit', function(event) {
     var ratingInput = document.querySelector('#rating');

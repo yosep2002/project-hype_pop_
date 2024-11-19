@@ -386,17 +386,17 @@ input:checked+.slider:before {
 
 			<div class="input-group">
 				<label for="userEmail">이메일</label> <input type="email"
-					id="userEmail" name="userEmail" value = "${param.email}" placeholder="이메일을 입력하세요.">
+					id="userEmail" name="userEmail" placeholder="이메일을 입력하세요.">
 			</div>
 
 			<div class="input-group">
 				<label for="userName">이름</label> <input type="text" id="userName"
-					name="userName" value = "${param.name}" placeholder="이름을 입력하세요.">
+					name="userName" placeholder="이름을 입력하세요.">
 			</div>
 
 			<div class="input-group">
 				<label for="userNumber">전화번호</label> <input type="tel"
-					maxlength="13" id="userNumber" value = "${param.number}" name="userNumber"
+					maxlength="13" id="userNumber" name="userNumber"
 					placeholder="하이픈(-) 제외 숫자만">
 			</div>
 

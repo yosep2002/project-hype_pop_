@@ -134,7 +134,7 @@
 
         <div class="social-login">
             <h3>소셜 로그인</h3>
-            <button onclick="location.href='/login/oauth2/code/naver'">N</button> <!-- 네이버 로그인 -->
+            <button onclick="location.href='https://nid.naver.com/oauth2.0/authorize'">N</button> <!-- 네이버 -->
             <button onclick="location.href='https://accounts.google.com/o/oauth2/v2/auth'">G</button> <!-- 구글 -->
             <button onclick="location.href='https://kauth.kakao.com/oauth/authorize'">K</button> <!-- 카카오 -->
             <button onclick="location.href='https://www.instagram.com/accounts/login/'">I</button> <!-- 인스타그램 -->

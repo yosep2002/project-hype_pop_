@@ -176,7 +176,7 @@ body {
 </style>
 </head>
 <body>
-	<jsp:include page="layout/popUpHeader.jsp" />
+	<jsp:include page="layout/goodsHeader.jsp" />
 	<sec:authorize access="isAuthenticated()">
 		<sec:authentication property="principal" var="pinfo" />
 		<input type="hidden" id="userNo" value="${pinfo.member.userNo}">
@@ -432,7 +432,7 @@ body {
 			</div>
 	</sec:authorize>
 	</div>
-	<jsp:include page="layout/popUpFooter.jsp" />
+	<jsp:include page="layout/goodsFooter.jsp" />
 	<jsp:include page="layout/goodsNavBar.jsp" />
 </body>
 <script type="text/javascript" src="/resources/goodsJs/goodsHeader.js"></script>

@@ -142,10 +142,10 @@ public Map<String, Integer> getInquiryCounts(int userNo) {
     return counts;
 }
 @Override
-public int getNoticeNo(String title) {
-	int result = supportmapper.getNoticeNo(title);
-	
-	return result;
+public Integer getNoticeNo(String title) {
+    Integer result = supportmapper.getNoticeNo(title);
+    return result;
 }
+
 
 }

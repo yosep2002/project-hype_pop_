@@ -63,21 +63,6 @@ public class MemberController {
 		return "member/login";
 	}
 
-	// 로그인 처리
-	@PostMapping("/login")
-	public String login(signInVO svo, Model model) {
-
-		signInVO member = mservice.loginMember(svo);
-		
-		
-		if (member != null) {
-			return "popUp/popUpMain";
-		} else {
-			model.addAttribute("error", "로그인을 오류입니다.");
-			return "member/login";
-		}
-	}
-
 	// 로그인 첫 화면 요청 메소드
 //	@RequestMapping(value = "/login", method = { RequestMethod.GET, RequestMethod.POST })
 //	public String login(Model model, HttpSession session) {
@@ -143,7 +128,7 @@ public class MemberController {
 		// 회원 가입
 		mservice.joinMember(svo);
 
-		return "member/joinSuccess";
+		return "member/login";
 
 	}
 

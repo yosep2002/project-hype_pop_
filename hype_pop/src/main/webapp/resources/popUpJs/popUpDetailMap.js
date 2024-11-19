@@ -68,7 +68,7 @@ function createMyLocationButton() {
     button.style.border = 'none'; // 테두리 제거
     button.style.borderRadius = '5px'; // 둥근 모서리
     button.style.cursor = 'pointer'; // 커서 모양
-    button.style.zIndex = 1000; // 버튼이 지도의 위에 표시되도록 설정
+    button.style.zIndex = 10; // 버튼이 지도의 위에 표시되도록 설정
     
     // 호버 효과
     button.style.transition = 'background-color 0.3s';

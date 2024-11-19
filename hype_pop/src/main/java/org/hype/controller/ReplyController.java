@@ -160,6 +160,9 @@ public class ReplyController {
        Integer userNo = Integer.parseInt(String.valueOf(request.get("userNo"))); // String에서 Integer로 변환
        Integer pageNum = Integer.parseInt(String.valueOf(request.get("pageNum"))); // 페이지 번호
        Integer amount = Integer.parseInt(String.valueOf(request.get("amount"))); // 항목 수
+       
+       System.out.println("댓글 불러오기용 스토어 넘버는 ? : " + psNo);
+       System.out.println("댓글 불러오기용 유저 넘버는 ? : " + userNo);
 
        System.out.println("Received request: " + request);
 
@@ -179,6 +182,9 @@ public class ReplyController {
 
        // 리뷰 가져오기
        List<psReplyVO> reviews = service.getOtherReviews(psNo, userNo, cri);
+       
+       System.out.println("불러온 리뷰 목록: " + reviews);
+       System.out.println("전체 리뷰 수: " + service.getTotalReviews(psNo, userNo));
 
        // 응답 맵 구성
        Map<String, Object> response = new HashMap<>();

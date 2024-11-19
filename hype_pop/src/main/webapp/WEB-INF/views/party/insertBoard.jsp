@@ -198,8 +198,8 @@ footer, nav {
 			</form>
 		</div>
 	</div>
-	<jsp:include page="layout/popUpFooter.jsp" />
-	<jsp:include page="layout/goodsNavBar.jsp" />
+	<jsp:include page="layout/partyFooter.jsp" />
+	<jsp:include page="layout/partyNavBar.jsp" />
 </body>
 <script type="text/javascript" src="/resources/partyJs/insertBoard.js"></script>
 <script type="text/javascript" src="/resources/partyJs/partyHeader.js"></script>

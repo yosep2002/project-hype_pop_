@@ -133,7 +133,7 @@ public class SupportController {
 	
 	@PostMapping("/createInquiry") // 문의 작성
     public String createInquiry(@RequestParam String title, @RequestParam String qnaType, 
-                                @RequestParam String content, /*HttpSession session,*/ Model model) {
+                                @RequestParam String content, @RequestParam int userNo, /*HttpSession session,*/ Model model) {
         // 사용자 번호 추출
 //        Integer userNo = (Integer) session.getAttribute("userNo");
         
@@ -143,14 +143,17 @@ public class SupportController {
         qna.setQnaType(qnaType);
         qna.setQnaContext(content);
         qna.setQnaAnswer("미답변");
-        qna.setUserNo(1);
+        qna.setUserNo(userNo);
         
         // userNo 설정
 //        qna.setUserNo(userNo); // userNo 값 설정
 
         // 문의 저장
         boolean isSaved = noticeService.createInquiry(qna); 
-        int noticeNo = noticeService.getNoticeNo(title);
+        Integer noticeNo = noticeService.getNoticeNo(title);
+        if (noticeNo == null) {
+            noticeNo = 0;
+        }
         
 
         if (isSaved) {

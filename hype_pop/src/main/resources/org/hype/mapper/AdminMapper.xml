@@ -404,7 +404,7 @@
 		WHERE gno = #{gno}
 	</delete>
 
-	<delete id="deleteGLike" parameterType="org.hype.domain.gLikeVO">
+	<delete id="deleteGLike" parameterType="int">
 		DELETE FROM goods_like_list_table
 		WHERE gno = #{gno}
 	</delete>

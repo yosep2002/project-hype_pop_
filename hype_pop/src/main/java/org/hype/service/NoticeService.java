@@ -46,7 +46,7 @@ public interface NoticeService {
 
    public Map<String, Integer> getInquiryCounts(int userNo);
  
-public int getNoticeNo(String title);
+   public Integer getNoticeNo(String title);
 
    
 }

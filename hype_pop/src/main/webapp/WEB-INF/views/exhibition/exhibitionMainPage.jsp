@@ -14,37 +14,20 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 350px;
+  height: 450px;
   overflow: hidden;
-  background-color: #f0f0f0;
+  background-color: #fee7ed;
   padding: 20px;
   margin: 0 auto;
-  width: 50%;
-  border: 2px solid #ccc;
+  width: 80%;
+  border: none
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   position: relative; /* 버튼 컨테이너를 절대 위치로 배치할 수 있도록 설정 */
 }
-/* 기존 스타일 유지 */
-/* banner-container의 스타일 */
-.banner-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 350px;
-  overflow: hidden;
-  background-color: #f9f2f6; /* 배경을 핑크색 계열로 변경 */
-  padding: 20px;
-  margin: 0 auto;
-  width: 650px;
-  border: 2px solid #f1c6d8; /* 테두리를 핑크색으로 */
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  position: relative;
-}
-
 /* 배너를 화면 크기에 맞게 설정 */
 .banner {
     width: 100%;
-    height: 400px;
+    height: 500px;
     overflow: hidden;
     position: relative;
 }
@@ -61,7 +44,7 @@
 /* button-container의 스타일 */
 .button-container {
   position: absolute;
-  bottom: 20px;
+  bottom: 30px;
   display: flex;
   justify-content: center;
   gap: 10px;
@@ -89,11 +72,11 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 50px;
+  height: 60px;
   background-color: #f9f2f6; /* 핑크색 배경 */
   padding: 20px;
   margin: 0 auto;
-  width: 650px;
+  width: 800px;
   border: 2px solid #f1c6d8;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   border-bottom: none;
@@ -104,14 +87,26 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  min-height: 350px;
+  min-height: 400px;
   background-color: #f9f2f6; /* 핑크색 배경 */
   padding: 20px;
   margin: 0 auto;
-  width: 650px;
+  width: 800px;
   border: 2px solid #f1c6d8;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   font-size: 10px;
+}
+
+/* exhibition-info */
+.exhibition-info {
+  width: 100%;
+  max-width: 800px; /* 최대 너비 설정 */
+  padding: 15px;
+  background-color: #ffffff;
+  border-radius: 5px;
+  margin: 0 auto 20px auto; /* 중앙 정렬 */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  list-style-type: none;  /* 마커 제거 */
 }
 
 /* exhibition-schedule */
@@ -119,34 +114,40 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  width: 580px;
+  width: 100%; /* 부모에 맞춰서 너비 조정 */
+  max-width: 650px; /* 최대 너비 설정 */
   padding: 15px;
   background-color: #f6e6f1; /* 연한 핑크색 배경 */
   border: 1px solid #f1c6d8;
   border-radius: 5px;
   margin-bottom: 10px;
   cursor: pointer;
-  height: 80px;
+  height: 100px;
+  margin: 0 auto; /* 중앙 정렬 */
 }
 
 /* exhibition-context */
 .exhibition-context {
   display: none;
-  width: 580px;
+  width: 100%; /* 부모에 맞춰서 너비 조정 */
+  max-width: 650px; /* 최대 너비 설정 */
   align-items: stretch;
   transition: height 0.3s ease;
   display: flex;
   flex-direction: column;
+  margin: 0 auto; /* 중앙 정렬 */
 }
 
 /* exhibition-banner-img */
 .exhibition-banner-img {
   width: 100%;
-  height: 300px;
+  max-width: 650px; /* 최대 너비 설정 */
+  height: 400px;
   background-color: #74b9ff; /* 하늘색 배경 */
   background-size: cover;
   background-position: center;
   margin-bottom: 10px;
+  margin: 0 auto; /* 중앙 정렬 */
 }
 
 /* 테이블 스타일 */
@@ -154,15 +155,16 @@ table {
   width: 100%;
   border-collapse: collapse;
   height: auto;
+  margin: 0 auto; /* 중앙 정렬 */
 }
 
 th, td {
-  padding: 8px;
+  padding: 10px;
   text-align: left;
   border: 1px solid #f1c6d8;
-  font-size: 10px;
-  min-height: 50px;
-  max-height: 50px;
+  font-size: 12px;
+  min-height: 60px;
+  max-height: 60px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -172,16 +174,6 @@ th {
   background-color: #f6e6f1; /* 연한 핑크색 */
 }
 
-/* exhibition-info */
-.exhibition-info {
-  width: 100%;
-  padding: 10px;
-  background-color: #ffffff;
-  border-radius: 5px;
-  margin-bottom: 20px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  list-style-type: none;  /* 마커 제거 */
-}
 
 /* #load-more 버튼 스타일 */
 #load-more {
@@ -190,10 +182,10 @@ th {
   background-color: #74b9ff; /* 하늘색 */
   color: white;
   border: none;
-  padding: 10px 20px;
+  padding: 12px 24px;
   border-radius: 5px;
   cursor: pointer;
-  font-size: 14px;
+  font-size: 16px;
   transition: background-color 0.3s;
 }
 

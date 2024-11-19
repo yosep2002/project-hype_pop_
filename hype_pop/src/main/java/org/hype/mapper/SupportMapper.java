@@ -42,7 +42,7 @@ public interface SupportMapper {
 
    public int getReplyCount(@Param("userNo") int userNo);
 
-public int getNoticeNo(String title);
+   public Integer getNoticeNo(String title);
 	
    
 }

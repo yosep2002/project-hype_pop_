@@ -196,8 +196,8 @@ tr:hover td {
 	      <button id="goToLogin" onclick="location.href='/member/login'">로그인하러 가기</button>
 	   </div>
 	</div>
-	<jsp:include page="layout/popUpFooter.jsp" />
-	<jsp:include page="layout/goodsNavBar.jsp" />
+	<jsp:include page="layout/partyFooter.jsp" />
+	<jsp:include page="layout/partyNavBar.jsp" />
 </body>
 <script type="text/javascript" src="/resources/partyJs/partyBoard.js"></script>
 <script type="text/javascript" src="/resources/partyJs/partyHeader.js"></script>

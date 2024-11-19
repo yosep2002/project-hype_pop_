@@ -1,18 +1,18 @@
 // 페이지 로드 시 알림 목록 숨기기
 document.addEventListener('DOMContentLoaded', () => {
-   const userNoElement = document.getElementById("userNo");
-   const userIdElement = document.getElementById("userId");
-   const userNo = userNoElement ? userNoElement.value : null;
-   const userId = userIdElement ? userIdElement.value : null;
-   
-   document.getElementById("goodsLogo").addEventListener('click', function() {
-       if (userNo) {
-           location.href = `/goodsStore/goodsMain?userNo=${userNo}`;
-       } else {
-           location.href = "/goodsStore/goodsMain";
-       }
-   });
-   
+	const userNoElement = document.getElementById("userNo");
+	const userIdElement = document.getElementById("userId");
+	const userNo = userNoElement ? userNoElement.value : null;
+	const userId = userIdElement ? userIdElement.value : null;
+	
+	document.getElementById("goodsLogo").addEventListener('click', function() {
+	    if (userNo) {
+	        location.href = `/goodsStore/goodsMain?userNo=${userNo}`;
+	    } else {
+	        location.href = "/goodsStore/goodsMain";
+	    }
+	});
+	
     const notificationList = document.getElementById('notificationList');
     notificationList.style.display = 'none'; // 알림 목록 숨김
     

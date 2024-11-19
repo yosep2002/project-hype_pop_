@@ -62,8 +62,5 @@
 		- INTERVAL '3' day and gsituation='배송중'
 	</update>
 
-	<!-- 배송지 기억하기 체크했을 때 가져오는 배송지 주소 -->
-	<select id="getUser" resultType="org.hype.domain.deliveryVO"> select address, DetailAddress
-		from delivery_tbl where userNo=#{userNo}
-	</select>
+
 </mapper>
